@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!-- Black rounded square -->
+  <rect x="40" y="40" width="160" height="160" rx="36" ry="36" fill="#0a0a0a"/>
+
+  <!-- White shield -->
+  <path d="M 120 72
+           L 72 88
+           L 72 128
+           Q 72 166 120 188
+           Q 168 166 168 128
+           L 168 88
+           Z"
+       fill="#ffffff"/>
+
+  <!-- 'A' in the same font as the 'agentoll' wordmark, large enough to
+       pierce the top of the shield and break past the sides at the bottom. -->
+  <text x="120" y="190"
+       text-anchor="middle"
+       font-family="'Helvetica Neue', 'Inter', 'Arial', sans-serif"
+       font-weight="600"
+       font-size="190"
+       fill="#0a0a0a">A</text>
+</svg>

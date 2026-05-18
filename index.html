@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentoll — Charge AI Agents for Access to Your Content</title>
+  <meta name="description" content="One npm install. AI bots pay to access your content. Humans always free." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000000;
+      --surface: #000000;
+      --surface2: #000000;
+      --border: transparent;
+      --accent: #ffffff;
+      --accent2: #ffffff;
+      --text: #ffffff;
+      --muted: #ffffff;
+      --code-bg: #1e1e1e;
+      --panel: #1e1e1e;
+      --panel-deep: #141414;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #000000;
+      border-bottom: none;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .nav-logo {
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .logo-wordmark {
+      height: 21px;
+      width: auto;
+      filter: invert(1);
+      opacity: 0.95;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-badge {
+      background: var(--surface);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-decoration: none;
+      border: none;
+      backdrop-filter: blur(12px);
+    }
+
+    /* HERO */
+    .hero-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      gap: clamp(32px, 5vw, 72px);
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 92px 24px 80px;
+      text-align: left;
+    }
+
+    .hero-copy { min-width: 0; }
+
+    /* Hero right: toll visualization */
+    .hero-viz {
+      position: relative;
+      min-height: 260px;
+      max-height: 400px;
+      aspect-ratio: 1 / 1.05;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
+      font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    }
+
+    .toll-scene__label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 14px;
+    }
+
+    .toll-lane {
+      margin-bottom: 28px;
+    }
+
+    .toll-lane:last-of-type { margin-bottom: 0; }
+
+    .toll-lane__cap {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 10px;
+    }
+
+    .toll-lane__track {
+      position: relative;
+      height: 44px;
+      border-radius: 2px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .toll-lane__track::after {
+      content: '';
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 10px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+    }
+
+    .toll-dest {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      color: rgba(255, 255, 255, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .toll-dest svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .toll-gate {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 56px;
+      margin-left: -28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .toll-gate__bar {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.85);
+      animation: toll-gate-throb 5s ease-in-out infinite;
+    }
+
+    .toll-gate__code {
+      position: relative;
+      z-index: 1;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+      animation: toll-402-pop 5s ease-in-out infinite;
+    }
+
+    .toll-gate__sub {
+      position: relative;
+      z-index: 1;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.5);
+      animation: toll-pay-glint 5s ease-in-out infinite;
+    }
+
+    .toll-dot {
+      position: absolute;
+      left: -8%;
+      bottom: 14px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px #000000;
+      will-change: left, opacity;
+    }
+
+    .toll-dot--human {
+      animation: toll-human-flow 2.8s linear infinite;
+      opacity: 0.85;
+    }
+
+    .toll-dot--human.toll-dot--h2 { animation-delay: -0.95s; opacity: 0.65; }
+    .toll-dot--human.toll-dot--h3 { animation-delay: -1.9s; opacity: 0.45; }
+
+    .toll-dot--bot {
+      animation: toll-bot-journey 5s ease-in-out infinite;
+      background: #ffffff;
+    }
+
+    .toll-dot--bot2 {
+      animation-delay: -2.5s;
+      width: 8px;
+      height: 8px;
+      bottom: 15px;
+      opacity: 0.7;
+    }
+
+    .toll-receipt {
+      position: absolute;
+      left: 56%;
+      bottom: 24px;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0);
+      animation: toll-receipt-fade 5s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes toll-human-flow {
+      0% { left: -8%; opacity: 0; }
+      14% { opacity: 0.95; }
+      100% { left: 108%; opacity: 0; }
+    }
+
+    @keyframes toll-bot-journey {
+      0% { left: -8%; opacity: 0; }
+      8% { opacity: 1; }
+      34% { left: calc(50% - 5px); }
+      40% { left: calc(50% - 5px); }
+      58% { left: calc(50% - 5px); }
+      100% { left: 108%; opacity: 0.9; }
+    }
+
+    @keyframes toll-gate-throb {
+      0%, 36% { opacity: 0.35; transform: scaleY(1); }
+      40%, 56% { opacity: 1; transform: scaleY(1.04); }
+      62%, 100% { opacity: 0.35; transform: scaleY(1); }
+    }
+
+    @keyframes toll-402-pop {
+      0%, 36% { opacity: 0.4; transform: scale(1); }
+      42%, 54% { opacity: 1; transform: scale(1.12); }
+      60%, 100% { opacity: 0.45; transform: scale(1); }
+    }
+
+    @keyframes toll-pay-glint {
+      0%, 40% { opacity: 0.25; }
+      48%, 52% { opacity: 0.9; }
+      60%, 100% { opacity: 0.25; }
+    }
+
+    @keyframes toll-receipt-fade {
+      0%, 52% { opacity: 0; }
+      58% { opacity: 0.9; }
+      72% { opacity: 0.9; }
+      88%, 100% { opacity: 0; }
+    }
+
+    .hero-brand {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 30px 65px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--accent2);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy h1 em { font-style: normal; color: #ffffff; }
+
+    .hero p,
+    .hero-copy p {
+      font-size: 20px;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 0 28px;
+      line-height: 1.6;
+    }
+
+    .proof-row {
+      margin: 22px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+      max-width: 900px;
+    }
+
+    .proof-pill {
+      border: none;
+      background: #000000;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: none;
+      backdrop-filter: blur(12px);
+    }
+
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+
+    /* INSTALL STRIP */
+    .install-strip {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      max-width: 480px;
+      margin: 36px 0 0;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .install-strip-label {
+      background: var(--panel-deep);
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 14px 16px;
+      border-right: none;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+    }
+
+    .install-strip code {
+      flex: 1;
+      padding: 14px 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 14px;
+      color: #ffffff;
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+    }
+
+    .install-strip button {
+      padding: 14px 16px;
+      background: var(--panel-deep);
+      border: none;
+      border-left: none;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 0.2s, background 0.2s;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+    }
+
+    .install-strip button:hover {
+      color: #ffffff;
+      background: #1a1a1a;
+    }
+
+    /* SECTION */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    section + section { padding-top: 0; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 18px;
+      margin-bottom: 48px;
+      max-width: 760px;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .step {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      backdrop-filter: blur(12px);
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: var(--panel-deep);
+      border: none;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .step h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* FRAMEWORK TABS */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: var(--panel);
+      padding: 6px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .tab {
+      padding: 8px 18px;
+      border-radius: 7px;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .tab:hover { color: var(--text); }
+
+    .tab.active {
+      background: var(--panel-deep);
+      color: var(--text);
+      border: none;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* CODE BLOCKS */
+    .code-block {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: none;
+      background: var(--panel-deep);
+    }
+
+    .code-filename {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover { color: var(--text); }
+
+    pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    pre code { color: var(--text); }
+
+    .kw, .str, .cm, .fn, .num, .var, .prop { color: #ffffff; }
+    .cm { color: #ffffff; font-style: italic; }
+
+    /* STEP LIST IN TABS */
+    .guide-steps { display: flex; flex-direction: column; gap: 20px; }
+
+    .guide-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .guide-step-num {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      background: #000000;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 2px;
+    }
+
+    .guide-step-body { flex: 1; }
+
+    .guide-step-body h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .guide-step-body p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* INLINE CODE */
+    code:not(pre code) {
+      background: var(--panel);
+      border: none;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      color: var(--accent2);
+    }
+
+    /* OPTIONS TABLE */
+    .options-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .options-table th {
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--panel-deep);
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: none;
+    }
+
+    .options-table td {
+      padding: 12px 16px;
+      border-bottom: none;
+      vertical-align: top;
+    }
+
+    .options-table tr:last-child td { border-bottom: none; }
+
+    .options-table tr:hover td { background: rgba(255, 255, 255, 0.04); }
+
+    .opt-name {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--accent2);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .opt-default {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .table-wrap {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    /* ABOUT / WHAT THIS IS */
+    .about-lead {
+      font-size: 18px;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 720px;
+      margin-bottom: 40px;
+    }
+
+    .about-block {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 24px 22px;
+      margin-bottom: 16px;
+      max-width: 720px;
+    }
+
+    .about-block:last-of-type { margin-bottom: 0; }
+
+    .about-block h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 12px;
+    }
+
+    .about-block p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .about-block p + p { margin-top: 12px; }
+
+    /* FOOTER */
+    footer {
+      border-top: none;
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    /* CALLOUT */
+    .callout {
+      background: var(--panel);
+      border: none;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--text);
+      margin: 16px 0;
+    }
+
+    .callout strong { color: #ffffff; }
+
+    /* TERMINAL */
+    .terminal {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--panel-deep);
+      border-bottom: none;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal pre {
+      padding: 16px 20px;
+    }
+
+    .t-prompt { color: #ffffff; }
+    .t-cmd { color: #ffffff; }
+    .t-out { color: #ffffff; }
+    .t-red { color: #ffffff; }
+    .t-green { color: #ffffff; }
+
+    /* DIVIDER */
+    hr {
+      border: none;
+      border-top: none;
+      margin: 0 24px;
+    }
+
+    /* AGENT MODE TOGGLE */
+    .agent-mode-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .agent-mode-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: color 0.2s;
+      user-select: none;
+    }
+
+    .agent-mode-label.active { color: var(--accent); }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--surface2);
+      border: none;
+      border-radius: 24px;
+      transition: background 0.2s;
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--muted);
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle-switch input:checked ~ .toggle-track {
+      background: #000000;
+    }
+
+    .toggle-switch input:checked ~ .toggle-thumb {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+
+    /* AGENT PROMPT BLOCKS */
+    .agent-prompt-block {
+      display: none;
+    }
+
+    .agent-prompt-block.visible {
+      display: block;
+    }
+
+    .guide-steps.hidden {
+      display: none;
+    }
+
+    .callout.hidden {
+      display: none;
+    }
+
+    .prompt-textarea-wrap {
+      background: var(--panel);
+      border: none;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: none;
+      background: var(--panel-deep);
+    }
+
+    .prompt-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .prompt-badge {
+      background: var(--bg);
+      border: none;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .prompt-hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .prompt-textarea {
+      width: 100%;
+      min-height: 220px;
+      background: transparent;
+      border: none;
+      padding: 20px;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+    }
+
+    .conversion-callout {
+      max-width: 1100px;
+      margin: 0 auto 56px;
+      padding: 28px 24px;
+      border: none;
+      border-radius: 12px;
+      background: var(--panel);
+      text-align: left;
+    }
+
+    .conversion-callout h3 {
+      font-size: 28px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .conversion-callout p {
+      color: #ffffff;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero-split {
+        grid-template-columns: 1fr;
+        padding: 60px 20px 56px;
+        gap: 40px;
+      }
+
+      .hero-viz {
+        max-width: 400px;
+        margin: 0;
+        min-height: 220px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .tabs { gap: 2px; }
+      .tab { padding: 7px 12px; font-size: 13px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .toll-dot,
+      .toll-gate__bar,
+      .toll-gate__code,
+      .toll-gate__sub,
+      .toll-receipt {
+        animation: none !important;
+      }
+
+      .toll-dot--human { left: 62%; opacity: 0.5; }
+      .toll-dot--human.toll-dot--h2 { left: 38%; opacity: 0.35; }
+      .toll-dot--human.toll-dot--h3 { left: 14%; opacity: 0.25; }
+      .toll-dot--bot { left: calc(50% - 5px); opacity: 0.85; }
+      .toll-dot--bot2 { left: 78%; opacity: 0.45; }
+      .toll-gate__bar { opacity: 0.6; transform: none; }
+      .toll-gate__code { opacity: 1; transform: none; }
+      .toll-receipt { opacity: 0.55; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span style="font-weight:700;letter-spacing:0.2px;">Agentoll</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#install">Install</a></li>
+    <li><a href="#options">Options</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <a class="nav-badge" href="#install">Install in 2 minutes</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero-split">
+  <div class="hero-copy">
+    <h1>Turn AI crawler traffic into<br/><em>revenue in one install</em></h1>
+    <div class="install-strip">
+      <div class="install-strip-label">npm</div>
+      <code id="install-cmd">npm install agent-toll</code>
+      <button onclick="copyInstall(this)">Copy</button>
+    </div>
+  </div>
+  <div class="hero-viz" aria-hidden="true">
+    <svg class="toll-sprite" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="toll-icon-site" viewBox="0 0 24 24">
+          <rect x="2.5" y="4" width="19" height="16" rx="1.75" fill="none" stroke="currentColor" stroke-width="1.25"/>
+          <line x1="2.5" y1="8.5" x2="21.5" y2="8.5" stroke="currentColor" stroke-width="1.25"/>
+          <circle cx="5.25" cy="6.25" r="1" fill="currentColor"/>
+          <circle cx="8.75" cy="6.25" r="1" fill="currentColor"/>
+        </symbol>
+      </defs>
+    </svg>
+    <div class="toll-scene__label">Middleware at the edge</div>
+    <div class="toll-lane">
+      <span class="toll-lane__cap">Human traffic</span>
+      <div class="toll-lane__track">
+        <span class="toll-dot toll-dot--human"></span>
+        <span class="toll-dot toll-dot--human toll-dot--h2"></span>
+        <span class="toll-dot toll-dot--human toll-dot--h3"></span>
+        <span class="toll-dest" title="Your website">
+          <svg xmlns="http://www.w3.org/2000/svg" focusable="false"><use href="#toll-icon-site"/></svg>
+        </span>
+      </div>
+    </div>
+    <div class="toll-lane">
+      <span class="toll-lane__cap">AI agents &amp; crawlers</span>
+      <div class="toll-lane__track">
+        <div class="toll-gate">
+          <span class="toll-gate__bar" aria-hidden="true"></span>
+          <span class="toll-gate__code">402</span>
+          <span class="toll-gate__sub">PAY</span>
+        </div>
+        <span class="toll-dot toll-dot--bot"></span>
+        <span class="toll-dot toll-dot--bot toll-dot--bot2"></span>
+        <span class="toll-receipt">receipt · 5m</span>
+        <span class="toll-dest" title="Your website">
+          <svg xmlns="http://www.w3.org/2000/svg" focusable="false"><use href="#toll-icon-site"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<!-- INSTALL / FRAMEWORK GUIDES -->
+<section id="install">
+  <div class="section-label">Get started</div>
+  <h2>Start collecting bot payments now</h2>
+  <p class="section-sub">Choose your stack and copy-paste. Use <code>agentToll()</code> for Express middleware and <code>agentTollFetch()</code> for Fetch runtimes.</p>
+
+  <div class="callout" id="wallet-callout">
+    <strong>You need a wallet address on Base</strong> to receive payments. Don't have one? <a href="https://metamask.io" target="_blank" style="color:var(--accent)">MetaMask</a> or <a href="https://www.coinbase.com/wallet" target="_blank" style="color:var(--accent)">Coinbase Wallet</a> → add Base network → copy your <code>0x...</code> address. Or skip the wallet entirely — payments go to the platform operator and you keep 0% (good for testing).
+  </div>
+
+  <div class="agent-mode-bar">
+    <span class="agent-mode-label" id="agent-mode-label">Agent prompt mode</span>
+    <label class="toggle-switch" title="Switch to agent prompt mode">
+      <input type="checkbox" id="agent-mode-toggle" onchange="toggleAgentMode(this)" />
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" onclick="showTab('express', this)">Express</button>
+    <button class="tab active" onclick="showTab('nextjs', this)">Next.js</button>
+    <button class="tab" onclick="showTab('static', this)">Static Site</button>
+    <button class="tab" onclick="showTab('fetch', this)">Fetch Runtimes</button>
+    <button class="tab" onclick="showTab('local', this)">Local Test</button>
+  </div>
+
+  <!-- EXPRESS -->
+  <div class="tab-panel" id="tab-express">
+    <div class="agent-prompt-block" id="prompt-express">
+      <div class="prompt-textarea-wrap">
+        <div class="prompt-header">
+          <div class="prompt-header-left">
+            <span class="prompt-badge">Agent Prompt</span>
+            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
+          </div>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <textarea class="prompt-textarea" readonly>Add the agent-toll npm package to my Express.js server to charge AI agents for access to my content.
+
+Steps to follow:
+
+1. Install the package:
+   npm install agent-toll
+
+2. In server.js, import agentToll and add it as middleware before all your routes:
+
+   const { agentToll } = require('agent-toll');
+   app.use(agentToll({ wallet: '0xYourWalletAddress' }));
+
+   Replace '0xYourWalletAddress' with my actual Base wallet address (or remove the wallet option entirely to send payments to the platform operator during testing).
+
+3. Verify it works by starting the server and running:
+   curl -H "User-Agent: GPTBot" http://localhost:3000/   → expect 402 Payment Required
+   curl http://localhost:3000/                           → expect normal response
+
+My existing routes should stay exactly the same — only add the middleware line.</textarea>
+      </div>
+    </div>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <h4>Install</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>npm install agent-toll</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <h4>Add one line to your server</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> { agentToll } = <span class="fn">require</span>(<span class="str">'agent-toll'</span>);
+
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+<span class="cm">// Add this line — that's it:</span>
+app.<span class="fn">use</span>(<span class="fn">agentToll</span>({ <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span> }));
+
+<span class="cm">// Your existing routes stay exactly the same:</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'Hello world'</span>));
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>);</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <h4>Test it</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" http://localhost:3000/</span>
+<span class="t-red">402 Payment Required</span>  <span class="t-out">← bot blocked</span>
+
+<span class="t-prompt">$</span> <span class="t-cmd">curl http://localhost:3000/</span>
+<span class="t-green">Hello world</span>           <span class="t-out">← human passes through</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT.JS -->
+  <div class="tab-panel active" id="tab-nextjs">
+    <div class="agent-prompt-block" id="prompt-nextjs">
+      <div class="prompt-textarea-wrap">
+        <div class="prompt-header">
+          <div class="prompt-header-left">
+            <span class="prompt-badge">Agent Prompt</span>
+            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
+          </div>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <textarea class="prompt-textarea" readonly>Add the agent-toll package to my Next.js app to charge AI agents for access to my content.
+
+Steps to follow:
+
+1. Install the package:
+   npm install agent-toll
+
+2. Create a new file called middleware.js at the project root (same level as package.json) with this content:
+
+   import { agentTollFetch } from 'agent-toll';
+   import { NextResponse } from 'next/server';
+
+   const toll = agentTollFetch({
+     wallet: '0xYourWalletAddress'
+   });
+
+   export async function middleware(request) {
+     const response = await toll(request);
+     if (response) return response;
+     return NextResponse.next();
+   }
+
+   export const config = {
+     matcher: ['/((?!_next|favicon.ico|.*\\.png|.*\\.jpg).*)']
+   };
+
+   Replace '0xYourWalletAddress' with my actual Base wallet address.
+
+3. Deploy and test:
+   <your deploy command>
+   curl -H "User-Agent: GPTBot" https://your-site.example/   → expect 402 Payment Required
+   curl -A "Mozilla/5.0" https://your-site.example/          → expect normal page response</textarea>
+      </div>
+    </div>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <h4>Install</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>npm install agent-toll</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <h4>Create <code>middleware.js</code> at your project root</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">middleware.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">import</span> { agentTollFetch } <span class="kw">from</span> <span class="str">'agent-toll'</span>;
+<span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">'next/server'</span>;
+
+<span class="kw">const</span> toll = <span class="fn">agentTollFetch</span>({
+  <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span>
+});
+
+<span class="kw">export async function</span> <span class="fn">middleware</span>(request) {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
+  <span class="kw">if</span> (response) <span class="kw">return</span> response;
+  <span class="kw">return</span> NextResponse.<span class="fn">next</span>();
+}
+
+<span class="kw">export const</span> config = {
+  <span class="prop">matcher</span>: [<span class="str">'/((?!_next|favicon.ico|.*\\.png|.*\\.jpg).*)' </span>]
+};</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <h4>Deploy and test</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">&lt;your deploy command&gt;</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
+<span class="t-red">402 Payment Required</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" https://your-site.example/</span>
+<span class="t-green">normal page response</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERCEL STATIC -->
+  <div class="tab-panel" id="tab-static">
+    <div class="agent-prompt-block" id="prompt-static">
+      <div class="prompt-textarea-wrap">
+        <div class="prompt-header">
+          <div class="prompt-header-left">
+            <span class="prompt-badge">Agent Prompt</span>
+            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
+          </div>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <textarea class="prompt-textarea" readonly>Add agent-toll to my static site (plain HTML / Vite — no Next.js) so every page is protected. Bots hitting any URL should get 402 Payment Required.
+
+Steps to follow:
+
+1. Build all static files (HTML, CSS, JS, assets) into a .gate-build/ folder.
+
+2. Create api/gate.js using an Express wrapper around agentToll so req/res are middleware-compatible. Restore the original path from __site_path, then resolve static files from .gate-build in this order:
+   - exact file
+   - .html
+   - /index.html
+   Also reject traversal paths and read wallet from AGENT_TOLL_WALLET.
+
+   const fs = require('fs');
+   const path = require('path');
+   const { agentToll } = require('agent-toll');
+
+   const middleware = agentToll({ wallet: '0xYourWalletAddress' });
+
+   const MIME = {
+     '.html': 'text/html', '.css': 'text/css',
+     '.js': 'application/javascript', '.json': 'application/json',
+     '.png': 'image/png', '.jpg': 'image/jpeg',
+     '.svg': 'image/svg+xml', '.ico': 'image/x-icon',
+   };
+
+   module.exports = (req, res) => {
+     middleware(req, res, () => {
+       let filePath = new URL(req.url, 'http://x').pathname;
+       if (filePath === '/' || filePath.endsWith('/')) filePath += 'index.html';
+       const full = path.join(__dirname, '..', 'public', filePath);
+       try {
+         const content = fs.readFileSync(full);
+         res.setHeader('Content-Type', MIME[path.extname(full)] || 'text/plain');
+         res.end(content);
+       } catch {
+         res.status(404).send('Not found');
+       }
+     });
+   };
+
+   Replace '0xYourWalletAddress' with my actual Base wallet address.
+
+3. Add a host routing config that forwards all requests to your gate function while preserving the original path (for example, as __site_path).
+
+   {
+     "functions": {
+       "api/gate.js": { "includeFiles": ".gate-build/**" }
+     },
+     "rewrites": [{ "source": "/(.*)", "destination": "/api/gate?__site_path=/$1" }]
+   }
+
+4. Install and deploy on your host:
+   npm install agent-toll
+   <your deploy command>
+
+5. Test — bots should get 402 while browser traffic still passes:
+   curl -H "User-Agent: GPTBot" https://your-site.example/           → 402 Payment Required
+   curl -H "User-Agent: GPTBot" https://your-site.example/about      → 402 Payment Required
+   curl -H "User-Agent: GPTBot" https://your-site.example/docs       → 402 Payment Required
+   curl -A "Mozilla/5.0" https://your-site.example/                  → normal page response</textarea>
+      </div>
+    </div>
+    <div class="callout" id="static-site-callout">
+      <strong>Plain HTML / Vite site?</strong> Use a catch-all rewrite/proxy rule that forwards <code>__site_path</code>, plus a single <code>api/gate.js</code> function that serves bundled files from <code>.gate-build</code>. This avoids static bypass and keeps toll checks on every URL.
+    </div>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <h4>Build static files into <code>.gate-build/</code> and install</h4>
+          <p>Build your site output into <code>.gate-build/</code>. Keep <code>api/gate.js</code> and your host routing config at project root:</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">project structure</span></div>
+            <pre><code>your-project/
+  api/
+    gate.js        ← add this
+  .gate-build/     ← build output served by gate
+    index.html
+    style.css
+    ...
+  host config      ← update rewrites/proxy
+  package.json</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>npm install agent-toll</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <h4>Add routing so every request hits <code>api/gate.js</code></h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">host routing config (example)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>{
+  <span class="str">"functions"</span>: {
+    <span class="str">"api/gate.js"</span>: { <span class="str">"includeFiles"</span>: <span class="str">".gate-build/**"</span> }
+  },
+  <span class="str">"rewrites"</span>: [{ <span class="str">"source"</span>: <span class="str">"/(.*)"</span>, <span class="str">"destination"</span>: <span class="str">"/api/gate?__site_path=/$1"</span> }]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <h4>Create <code>api/gate.js</code></h4>
+          <p>Use the official static gate template included in the <code>guides</code> folder. It restores <code>__site_path</code>, runs agent-toll with Express-shaped req/res, and resolves extensionless routes safely from <code>.gate-build</code>.</p>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">api/gate.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="cm">// Copy the static gate template from the guides folder.</span>
+<span class="cm">//</span>
+<span class="cm">// Includes:</span>
+<span class="cm">// - Express wrapper for agentToll middleware</span>
+<span class="cm">// - __site_path forwarding support</span>
+<span class="cm">// - traversal-safe file resolution</span>
+<span class="cm">// - exact/.html/index.html fallback</span>
+<span class="cm">// - AGENT_TOLL_WALLET env support</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-body">
+          <h4>Deploy and test every route</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">&lt;your deploy command&gt;</span>
+
+<span class="t-out"># Every URL is now protected:</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
+<span class="t-red">402 Payment Required</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/about</span>
+<span class="t-red">402 Payment Required</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" https://your-site.example/</span>
+<span class="t-green">normal page response</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FETCH RUNTIMES -->
+  <div class="tab-panel" id="tab-fetch">
+    <div class="agent-prompt-block" id="prompt-fetch">
+      <div class="prompt-textarea-wrap">
+        <div class="prompt-header">
+          <div class="prompt-header-left">
+            <span class="prompt-badge">Agent Prompt</span>
+            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
+          </div>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <textarea class="prompt-textarea" readonly>Add the agent-toll package to my Fetch-based runtime so AI agents pay for access.
+
+Core steps (applies to all Fetch runtimes):
+1. Install the package:
+   npm install agent-toll
+2. Import and create toll middleware:
+   import { agentTollFetch } from 'agent-toll';
+   const toll = agentTollFetch({ wallet: '0xYourWalletAddress' });
+3. In the runtime's request handler, call:
+   const response = await toll(request);
+   if (response) return response;
+   // continue normal request handling
+4. Replace '0xYourWalletAddress' with my real Base wallet.
+5. Verify:
+   curl -H "User-Agent: GPTBot" <url>  -> expect 402 Payment Required
+   curl -A "Mozilla/5.0" <url>         -> expect normal response
+
+Runtime-specific appendices:
+- SvelteKit: add to src/hooks.server.js inside handle({ event, resolve }) using toll(event.request) before resolve(event).
+- Cloudflare Workers: add to worker.js/default export fetch(request) before fetch(request).
+- Bun: add to server.ts in Bun.serve({ fetch(request) { ... }}) before returning app response. Use bun add agent-toll if Bun is your package manager.</textarea>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:15px;margin-bottom:20px;">Use this when your runtime handles standard Fetch <code>Request</code> objects. Same pattern, different file path.</p>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <h4>Core pattern (<code>agentTollFetch()</code>)</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">generic fetch runtime</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">import</span> { agentTollFetch } <span class="kw">from</span> <span class="str">'agent-toll'</span>;
+
+<span class="kw">const</span> toll = <span class="fn">agentTollFetch</span>({ <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span> });
+
+<span class="kw">export async function</span> <span class="fn">handleRequest</span>(request) {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
+  <span class="kw">if</span> (response) <span class="kw">return</span> response;
+  <span class="cm">// continue your normal response logic</span>
+  <span class="kw">return new</span> <span class="fn">Response</span>(<span class="str">'Hello world'</span>);
+}</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <h4>Runtime-specific file targets</h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">SvelteKit — src/hooks.server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">export async function</span> <span class="fn">handle</span>({ event, resolve }) {
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(event.request);
+  <span class="kw">if</span> (response) <span class="kw">return</span> response;
+  <span class="kw">return</span> <span class="fn">resolve</span>(event);
+}</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">Cloudflare Worker — worker.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">export default</span> {
+  <span class="kw">async</span> <span class="fn">fetch</span>(request) {
+    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
+    <span class="kw">if</span> (response) <span class="kw">return</span> response;
+    <span class="kw">return</span> <span class="fn">fetch</span>(request);
+  }
+};</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">Bun — server.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>Bun.<span class="fn">serve</span>({
+  <span class="kw">async</span> <span class="fn">fetch</span>(request) {
+    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
+    <span class="kw">if</span> (response) <span class="kw">return</span> response;
+    <span class="kw">return new</span> <span class="fn">Response</span>(<span class="str">'Hello world'</span>);
+  }
+});</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <h4>Verify bot vs browser behavior</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
+<span class="t-red">402 Payment Required</span>  <span class="t-out">← bot blocked</span>
+
+<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" https://your-site.example/</span>
+<span class="t-green">normal app response</span>  <span class="t-out">← browser passes through</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCAL TEST -->
+  <div class="tab-panel" id="tab-local">
+    <div class="agent-prompt-block" id="prompt-local">
+      <div class="prompt-textarea-wrap">
+        <div class="prompt-header">
+          <div class="prompt-header-left">
+            <span class="prompt-badge">Agent Prompt</span>
+            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
+          </div>
+          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <textarea class="prompt-textarea" readonly>Create a minimal local test server using agent-toll and Express so I can see a 402 Payment Required response fire for bot user-agents. No existing project needed — create a fresh throwaway folder.
+
+Steps to follow:
+
+1. Create and set up a test folder:
+   mkdir toll-test && cd toll-test
+   npm init -y && npm install agent-toll express
+
+2. Create server.js in that folder with this content:
+
+   const express = require('express');
+   const { agentToll } = require('agent-toll');
+
+   const app = express();
+   app.use(agentToll()); // no wallet = operator gets 100% (fine for testing)
+   app.get('/', (req, res) => res.send('Hello human!'));
+   app.listen(3000, () => console.log('Running on http://localhost:3000'));
+
+3. Start the server:
+   node server.js
+
+4. In a second terminal, test it:
+   curl -H "User-Agent: GPTBot" http://localhost:3000/    → should return 402 ✓
+   curl -A "Mozilla/5.0" http://localhost:3000/           → should return "Hello human!" ✓</textarea>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:15px;margin-bottom:20px;" class="local-hint">Just want to see a 402 fire? Create a throwaway folder and run this — no website needed.</p>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="guide-step-num">1</div>
+        <div class="guide-step-body">
+          <h4>Set up a test folder</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">mkdir toll-test && cd toll-test</span>
+<span class="t-prompt">$</span> <span class="t-cmd">npm init -y && npm install agent-toll express</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">2</div>
+        <div class="guide-step-body">
+          <h4>Create <code>server.js</code></h4>
+          <div class="code-block">
+            <div class="code-header"><span class="code-filename">server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> { agentToll } = <span class="fn">require</span>(<span class="str">'agent-toll'</span>);
+
+<span class="kw">const</span> app = <span class="fn">express</span>();
+app.<span class="fn">use</span>(<span class="fn">agentToll</span>()); <span class="cm">// no wallet = operator gets 100%</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'Hello human!'</span>));
+app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.<span class="fn">log</span>(<span class="str">'Running on http://localhost:3000'</span>));</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">3</div>
+        <div class="guide-step-body">
+          <h4>Run and test</h4>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">node server.js</span>
+
+<span class="t-out"># In another terminal:</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" http://localhost:3000/</span>
+<span class="t-red">402 Payment Required</span>  ✓
+
+<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" http://localhost:3000/</span>
+<span class="t-green">Hello human!</span>          ✓</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr />
+
+<!-- OPTIONS -->
+<section id="options">
+  <div class="section-label">Configuration</div>
+  <h2>Options</h2>
+  <p class="section-sub">All options are optional. The only one you'll usually set is <code>wallet</code>.</p>
+  <div class="table-wrap">
+    <table class="options-table">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="opt-name">wallet</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Your Base wallet address. Omit → operator receives 100% of payments.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">receiptTtlSeconds</code></td>
+          <td><span class="opt-default">300</span></td>
+          <td>How long a paid receipt stays valid (seconds). Agents don't re-pay within this window.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">paymentRpcUrl</code></td>
+          <td><span class="opt-default">mainnet.base.org</span></td>
+          <td>Base RPC URL for verifying on-chain payments. Use a dedicated provider for high-traffic production.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">maxRequestsPerMinute</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Rate limit per agent wallet per minute. Unset by default — no rate limiting.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">maxSpendPerScope</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>USDC spend cap per agent per route. e.g. <code>'1.0'</code></td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">maxSpendTotal</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Total USDC spend cap per agent across all routes.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">metrics</code></td>
+          <td><span class="opt-default">true</span></td>
+          <td>Enable Prometheus-style metrics at <code>/metrics</code>. Enabled by default.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">receiptStorePath</code></td>
+          <td><span class="opt-default">.agent-toll-receipts.json</span></td>
+          <td>Path to persist receipts to disk (Node.js only). Receipts survive restarts. Use a custom <code>store</code> for distributed deployments.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">store</code></td>
+          <td><span class="opt-default">FileStore</span></td>
+          <td>Custom store object for Redis/KV/etc. Useful for horizontal scaling.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">receiptSigningUrl</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>URL of a remote signing platform. Required for serverless/multi-replica deployments where a stable local key is unavailable. Must be paired with <code>receiptSigningToken</code>.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">receiptSigningToken</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Shared secret to authenticate with the remote signing platform.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">receiptSignerPrivateKey</code></td>
+          <td><span class="opt-default">auto-generated</span></td>
+          <td>Explicit private key for signing receipts locally. Omit to auto-generate and persist to <code>receiptStorePath</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="code-block">
+      <div class="code-header"><span class="code-filename">Full example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="fn">agentToll</span>({
+  <span class="prop">wallet</span>: <span class="str">'0xYourWallet'</span>,
+  <span class="prop">receiptTtlSeconds</span>: <span class="num">300</span>,
+  <span class="prop">maxRequestsPerMinute</span>: <span class="num">60</span>,
+  <span class="prop">maxSpendPerScope</span>: <span class="str">'1.0'</span>,
+  <span class="prop">maxSpendTotal</span>: <span class="str">'10.0'</span>,
+  <span class="prop">metrics</span>: <span class="kw">true</span>,
+})</code></pre>
+    </div>
+  </div>
+</section>
+
+<hr />
+
+<!-- WHAT THIS IS -->
+<section id="about">
+  <div class="section-label">About</div>
+  <h2>What Agentoll is</h2>
+  <p class="about-lead"><strong>Agentoll</strong> is server-side middleware you add in front of your existing routes. It classifies each request: real browser traffic continues as usual; automated agents and crawlers hit a <strong>402 Payment Required</strong> challenge with payment instructions, settle per that challenge, then retry with proof. The middleware verifies payment and issues a <strong>short-lived signed receipt</strong> so they are not charged again for every request.</p>
+
+  <div class="about-block">
+    <h3>Why it exists</h3>
+    <p>AI systems and bots can pull your content or APIs at scale without your consent or compensation. Agentoll is a practical gate: you keep your app structure, add one integration layer, and only automated clients that complete payment get through protected paths.</p>
+  </div>
+
+  <div class="about-block">
+    <h3>What you add</h3>
+    <p>Install the npm package and wire <code>agentToll()</code> (Express-style) or <code>agentTollFetch()</code> (Fetch runtimes like Next.js middleware). You optionally set a wallet address (<code>0x…</code>) to receive payouts. You do not build your own payment verification — that and receipts are handled by the middleware.</p>
+  </div>
+
+  <div class="about-block">
+    <h3>Defaults (at a glance)</h3>
+    <p>Typical challenge amount is a tiny USDC sum per receipt; receipts default to about <strong>five minutes</strong> of reuse. With a publisher wallet configured, revenue is split between you and the platform operator; without a wallet, proceeds go to the operator (useful for testing).</p>
+  </div>
+
+  <div class="callout" style="margin-top:28px;max-width:720px;">
+    <strong>Scope it deliberately.</strong> Toll applied globally can block search crawlers (for example Googlebot). Apply middleware only to routes you want to monetize or protect. <strong>Agentoll is in private beta</strong> — fit for pilots and early traffic, not a guarantee of production SLA.
+  </div>
+</section>
+
+<div class="conversion-callout">
+  <h3>Ready to monetize your AI traffic?</h3>
+  <p>Start with one command, then paste one middleware line into your app.</p>
+  <div class="hero-actions" style="margin-bottom:0;justify-content:flex-start;">
+    <a class="btn btn-primary" href="#install">Install Agentoll</a>
+    <a class="btn btn-secondary" href="https://www.npmjs.com/package/agent-toll" target="_blank">View npm package</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <strong style="margin-right:8px;">Agentoll</strong>
+    <a href="https://www.npmjs.com/package/agent-toll" target="_blank">npm</a> &mdash; Private Beta
+  </p>
+</footer>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function copyInstall(btn) {
+    navigator.clipboard.writeText('npm install agent-toll').then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+
+  function copyPrompt(btn) {
+    const textarea = btn.closest('.prompt-textarea-wrap').querySelector('.prompt-textarea');
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+
+  function toggleAgentMode(checkbox) {
+    const on = checkbox.checked;
+    const label = document.getElementById('agent-mode-label');
+    label.classList.toggle('active', on);
+
+    // Show/hide wallet callout
+    document.getElementById('wallet-callout').classList.toggle('hidden', on);
+
+    // For each tab panel, toggle guide-steps ↔ agent prompt blocks
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.querySelectorAll('.guide-steps').forEach(el => el.classList.toggle('hidden', on));
+      panel.querySelectorAll('.agent-prompt-block').forEach(el => el.classList.toggle('visible', on));
+      // Static site tab has its own inner callout and hint paragraph
+      panel.querySelectorAll('#static-site-callout').forEach(el => el.classList.toggle('hidden', on));
+      panel.querySelectorAll('.local-hint').forEach(el => el.classList.toggle('hidden', on));
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160">
+  <!-- Wordmark -->
+  <text x="20" y="110"
+       font-family="'Helvetica Neue', 'Inter', 'Arial', sans-serif"
+       font-weight="700"
+       font-size="96"
+       letter-spacing="-4"
+       fill="#0a0a0a">agentoll</text>
+</svg>
