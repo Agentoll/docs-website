@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agentoll — Charge AI Agents for Access to Your Content</title>
-  <meta name="description" content="One npm install. AI bots pay to access your content. Humans always free." />
+  <meta name="description" content="HTTP middleware for computer-to-computer transactions. Automated clients pay micro-USDC via x402 v2 on Base; human browsers pass through free by default." />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1090,10 +1090,56 @@
 <section id="install">
   <div class="section-label">Get started</div>
   <h2>Start collecting bot payments now</h2>
-  <p class="section-sub">Choose your stack and copy-paste. Use <code>agentToll()</code> for Express middleware and <code>agentTollFetch()</code> for Fetch runtimes.</p>
+  <p class="section-sub">Same toll logic everywhere — pick <strong>Express</strong> (<code>agentToll()</code>) or <strong>Fetch</strong> (<code>agentTollFetch()</code> for Next.js, Workers, SvelteKit, Bun). Static HTML uses a gate function.</p>
 
   <div class="callout" id="wallet-callout">
-    <strong>You need a wallet address on Base</strong> to receive payments. Don't have one? <a href="https://metamask.io" target="_blank" style="color:var(--accent)">MetaMask</a> or <a href="https://www.coinbase.com/wallet" target="_blank" style="color:var(--accent)">Coinbase Wallet</a> → add Base network → copy your <code>0x...</code> address. Or skip the wallet entirely — payments go to the platform operator and you keep 0% (good for testing).
+    <strong>Production checklist:</strong>
+    <ul style="margin:10px 0 0 1.1em;color:var(--muted);font-size:14px;line-height:1.7;">
+      <li><code>PUBLISHER_WALLET</code> — your USDC payee address</li>
+      <li><code>AGENT_TOLL_FACILITATOR_URL</code> + <code>BASE_RPC_URL</code> (hosted), or <code>FACILITATOR_PRIVATE_KEY</code> + <code>BASE_RPC_URL</code> (self-hosted)</li>
+      <li>Receipt signing — <code>RECEIPT_SIGNER_PRIVATE_KEY</code> or <code>AGENT_TOLL_RECEIPT_SIGNING_URL</code> + <code>AGENT_TOLL_RECEIPT_SIGNING_TOKEN</code> + <code>AGENT_TOLL_RECEIPT_SIGNER_ADDRESS</code></li>
+      <li><code>receiptStorePath</code> or custom <code>store</code> for multiple instances</li>
+      <li><code>humanBypass: true</code> for public websites (default)</li>
+      <li><code>metricsApiKey</code> if you enable metrics</li>
+    </ul>
+    <p style="margin-top:12px;font-size:14px;">Need a wallet? <a href="https://metamask.io" target="_blank" style="color:var(--accent)">MetaMask</a> or <a href="https://www.coinbase.com/wallet" target="_blank" style="color:var(--accent)">Coinbase Wallet</a> on Base. Never use <code>paymentProvider</code> in production (tests only).</p>
+  </div>
+
+  <div id="facilitators-callout" style="margin-bottom:28px;">
+    <h4 style="font-size:15px;font-weight:600;margin-bottom:10px;">Hosted facilitators (recommended)</h4>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:14px;">Use a hosted x402 facilitator so you do not need a gas wallet. <code>agent-toll</code> calls <code>POST {facilitatorUrl}/settle</code> and verifies the transaction on <code>BASE_RPC_URL</code> before issuing a receipt. Check <code>GET {facilitatorUrl}/supported</code> for <code>eip155:8453</code> (Base) before going live.</p>
+    <div class="code-block" style="margin-bottom:16px;">
+      <div class="code-header"><span class="code-filename">.env</span></div>
+      <pre><code>export PUBLISHER_WALLET=0xYourWalletAddress
+export AGENT_TOLL_FACILITATOR_URL=https://facilitator.xpay.sh
+export BASE_RPC_URL=https://mainnet.base.org
+export RECEIPT_SIGNER_PRIVATE_KEY=0x...</code></pre>
+    </div>
+    <div class="table-wrap">
+      <table class="options-table">
+        <thead>
+          <tr><th>Facilitator</th><th>URL</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>xpay</td>
+            <td><code>https://facilitator.xpay.sh</code></td>
+            <td>Permissionless, gas-sponsored, Base + Sepolia</td>
+          </tr>
+          <tr>
+            <td>Coinbase CDP</td>
+            <td><code>https://api.cdp.coinbase.com/platform/v2/x402</code></td>
+            <td>Production; requires CDP API credentials</td>
+          </tr>
+          <tr>
+            <td>x402.org</td>
+            <td><code>https://x402.org/facilitator</code></td>
+            <td>Testnet / dev</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:14px;margin-top:14px;">More facilitators: <a href="https://www.x402.org/ecosystem?filter=facilitators" target="_blank" style="color:var(--accent)">x402.org ecosystem</a>. Self-hosted alternative: <code>FACILITATOR_PRIVATE_KEY</code> + <code>BASE_RPC_URL</code> instead of <code>AGENT_TOLL_FACILITATOR_URL</code> (your wallet pays gas).</p>
   </div>
 
   <div class="agent-mode-bar">
@@ -1106,15 +1152,13 @@
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" onclick="showTab('express', this)">Express</button>
-    <button class="tab active" onclick="showTab('nextjs', this)">Next.js</button>
+    <button class="tab active" onclick="showTab('express', this)">Express</button>
+    <button class="tab" onclick="showTab('fetch', this)">Fetch (Next.js, Workers, …)</button>
     <button class="tab" onclick="showTab('static', this)">Static Site</button>
-    <button class="tab" onclick="showTab('fetch', this)">Fetch Runtimes</button>
-    <button class="tab" onclick="showTab('local', this)">Local Test</button>
   </div>
 
   <!-- EXPRESS -->
-  <div class="tab-panel" id="tab-express">
+  <div class="tab-panel active" id="tab-express">
     <div class="agent-prompt-block" id="prompt-express">
       <div class="prompt-textarea-wrap">
         <div class="prompt-header">
@@ -1128,21 +1172,27 @@
 
 Steps to follow:
 
-1. Install the package:
-   npm install agent-toll
+1. Install packages (Express is a separate peer dependency):
+   npm install agent-toll express
 
-2. In server.js, import agentToll and add it as middleware before all your routes:
+2. In server.js, mount agentToll before routes with production env vars:
+   app.use(agentToll({
+     wallet: process.env.PUBLISHER_WALLET,
+     facilitatorUrl: process.env.AGENT_TOLL_FACILITATOR_URL,
+     paymentRpcUrl: process.env.BASE_RPC_URL,
+     receiptSignerPrivateKey: process.env.RECEIPT_SIGNER_PRIVATE_KEY,
+   }));
+   (Or FACILITATOR_PRIVATE_KEY instead of AGENT_TOLL_FACILITATOR_URL for self-hosted.)
 
-   const { agentToll } = require('agent-toll');
-   app.use(agentToll({ wallet: '0xYourWalletAddress' }));
-
-   Replace '0xYourWalletAddress' with my actual Base wallet address (or remove the wallet option entirely to send payments to the platform operator during testing).
-
-3. Verify it works by starting the server and running:
+3. Verify on an existing server:
    curl -H "User-Agent: GPTBot" http://localhost:3000/   → expect 402 Payment Required
-   curl http://localhost:3000/                           → expect normal response
+   curl -A "Mozilla/5.0" http://localhost:3000/         → expect normal response (plain curl is treated as an agent)
 
-My existing routes should stay exactly the same — only add the middleware line.</textarea>
+4. Optional — quick local test (no existing project):
+   mkdir toll-test && cd toll-test && npm init -y && npm install agent-toll express
+   Create server.js with agentToll({ wallet: process.env.PUBLISHER_WALLET }) before routes, then node server.js and curl as above.
+
+My existing routes should stay exactly the same — only add the middleware.</textarea>
       </div>
     </div>
     <div class="guide-steps">
@@ -1152,14 +1202,16 @@ My existing routes should stay exactly the same — only add the middleware line
           <h4>Install</h4>
           <div class="code-block">
             <div class="code-header"><span class="code-filename">terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code>npm install agent-toll</code></pre>
+            <pre><code>npm install agent-toll express</code></pre>
           </div>
+          <p style="color:var(--muted);font-size:14px;margin-top:10px;">Express is an optional peer dependency — install it separately for <code>agentToll()</code>. Requires Node.js 18+.</p>
         </div>
       </div>
       <div class="guide-step">
         <div class="guide-step-num">2</div>
         <div class="guide-step-body">
-          <h4>Add one line to your server</h4>
+          <h4>Mount middleware</h4>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:12px;">Wallet-only config is enough to see a <strong>402</strong> locally; production needs a hosted facilitator (or self-hosted gas wallet), <code>BASE_RPC_URL</code>, and receipt signing.</p>
           <div class="code-block">
             <div class="code-header"><span class="code-filename">server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
@@ -1167,10 +1219,13 @@ My existing routes should stay exactly the same — only add the middleware line
 
 <span class="kw">const</span> app = <span class="fn">express</span>();
 
-<span class="cm">// Add this line — that's it:</span>
-app.<span class="fn">use</span>(<span class="fn">agentToll</span>({ <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span> }));
+app.<span class="fn">use</span>(<span class="fn">agentToll</span>({
+  <span class="prop">wallet</span>: process.env.<span class="prop">PUBLISHER_WALLET</span>,
+  <span class="prop">facilitatorUrl</span>: process.env.<span class="prop">AGENT_TOLL_FACILITATOR_URL</span>,
+  <span class="prop">paymentRpcUrl</span>: process.env.<span class="prop">BASE_RPC_URL</span>,
+  <span class="prop">receiptSignerPrivateKey</span>: process.env.<span class="prop">RECEIPT_SIGNER_PRIVATE_KEY</span>,
+}));
 
-<span class="cm">// Your existing routes stay exactly the same:</span>
 app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'Hello world'</span>));
 
 app.<span class="fn">listen</span>(<span class="num">3000</span>);</code></pre>
@@ -1190,17 +1245,37 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>);</code></pre>
             <pre><code><span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" http://localhost:3000/</span>
 <span class="t-red">402 Payment Required</span>  <span class="t-out">← bot blocked</span>
 
-<span class="t-prompt">$</span> <span class="t-cmd">curl http://localhost:3000/</span>
-<span class="t-green">Hello world</span>           <span class="t-out">← human passes through</span></code></pre>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" http://localhost:3000/</span>
+<span class="t-green">Hello world</span>           <span class="t-out">← browser passes through</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-body">
+          <h4>Quick local test <span style="font-weight:400;color:var(--muted)">(optional)</span></h4>
+          <p class="local-hint" style="color:var(--muted);font-size:14px;margin-bottom:12px;">No project yet? Spin up a throwaway folder to see a 402 fire.</p>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+              <div class="terminal-dot" style="background:#ffffff"></div>
+            </div>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">mkdir toll-test && cd toll-test</span>
+<span class="t-prompt">$</span> <span class="t-cmd">npm init -y && npm install agent-toll express</span>
+<span class="t-out"># server.js — same agentToll() mount as step 2, then:</span>
+<span class="t-prompt">$</span> <span class="t-cmd">node server.js</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" http://localhost:3000/</span>
+<span class="t-red">402 Payment Required</span>  ✓</code></pre>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- NEXT.JS -->
-  <div class="tab-panel active" id="tab-nextjs">
-    <div class="agent-prompt-block" id="prompt-nextjs">
+  <!-- FETCH (Next.js, Workers, SvelteKit, Bun) -->
+  <div class="tab-panel" id="tab-fetch">
+    <div class="agent-prompt-block" id="prompt-fetch">
       <div class="prompt-textarea-wrap">
         <div class="prompt-header">
           <div class="prompt-header-left">
@@ -1209,40 +1284,31 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>);</code></pre>
           </div>
           <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
         </div>
-        <textarea class="prompt-textarea" readonly>Add the agent-toll package to my Next.js app to charge AI agents for access to my content.
+        <textarea class="prompt-textarea" readonly>Add agent-toll to my Fetch-based app (Next.js, Cloudflare Workers, SvelteKit, or Bun) using agentTollFetch().
 
-Steps to follow:
-
-1. Install the package:
-   npm install agent-toll
-
-2. Create a new file called middleware.js at the project root (same level as package.json) with this content:
-
-   import { agentTollFetch } from 'agent-toll';
-   import { NextResponse } from 'next/server';
-
+Steps:
+1. npm install agent-toll
+2. Create toll once with production env vars:
    const toll = agentTollFetch({
-     wallet: '0xYourWalletAddress'
+     wallet: process.env.PUBLISHER_WALLET,
+     facilitatorUrl: process.env.AGENT_TOLL_FACILITATOR_URL,
+     paymentRpcUrl: process.env.BASE_RPC_URL,
+     receiptSignerPrivateKey: process.env.RECEIPT_SIGNER_PRIVATE_KEY,
    });
-
-   export async function middleware(request) {
-     const response = await toll(request);
-     if (response) return response;
-     return NextResponse.next();
-   }
-
-   export const config = {
-     matcher: ['/((?!_next|favicon.ico|.*\\.png|.*\\.jpg).*)']
-   };
-
-   Replace '0xYourWalletAddress' with my actual Base wallet address.
-
-3. Deploy and test:
-   <your deploy command>
-   curl -H "User-Agent: GPTBot" https://your-site.example/   → expect 402 Payment Required
-   curl -A "Mozilla/5.0" https://your-site.example/          → expect normal page response</textarea>
+3. In the framework request hook, before handling the request:
+   const result = await toll(request);
+   if (result instanceof Response) return result;
+   if (result?.passthrough) { /* continue and set payment-response header on the response */ }
+   // null = human bypass
+4. Put the hook in the right file for my stack:
+   - Next.js: middleware.js at project root (+ export const config matcher)
+   - SvelteKit: src/hooks.server.js inside handle({ event, resolve })
+   - Cloudflare Workers: export default { async fetch(request) { ... } }
+   - Bun: Bun.serve({ async fetch(request) { ... } })
+5. Test: curl -H "User-Agent: GPTBot" https://your-site.example/ → 402; curl -A "Mozilla/5.0" https://your-site.example/ → normal response</textarea>
       </div>
     </div>
+    <p style="color:var(--muted);font-size:15px;margin-bottom:20px;">Same <code>agentTollFetch()</code> everywhere — only the file path changes.</p>
     <div class="guide-steps">
       <div class="guide-step">
         <div class="guide-step-num">1</div>
@@ -1257,24 +1323,33 @@ Steps to follow:
       <div class="guide-step">
         <div class="guide-step-num">2</div>
         <div class="guide-step-body">
-          <h4>Create <code>middleware.js</code> at your project root</h4>
+          <h4>Wire <code>agentTollFetch()</code></h4>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:12px;">Example below is <strong>Next.js</strong> <code>middleware.js</code>; other frameworks use the same toll call in their hook (see step 3).</p>
           <div class="code-block">
             <div class="code-header"><span class="code-filename">middleware.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code><span class="kw">import</span> { agentTollFetch } <span class="kw">from</span> <span class="str">'agent-toll'</span>;
 <span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">'next/server'</span>;
 
 <span class="kw">const</span> toll = <span class="fn">agentTollFetch</span>({
-  <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span>
+  <span class="prop">wallet</span>: process.env.<span class="prop">PUBLISHER_WALLET</span>,
+  <span class="prop">facilitatorUrl</span>: process.env.<span class="prop">AGENT_TOLL_FACILITATOR_URL</span>,
+  <span class="prop">paymentRpcUrl</span>: process.env.<span class="prop">BASE_RPC_URL</span>,
+  <span class="prop">receiptSignerPrivateKey</span>: process.env.<span class="prop">RECEIPT_SIGNER_PRIVATE_KEY</span>,
 });
 
 <span class="kw">export async function</span> <span class="fn">middleware</span>(request) {
-  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
-  <span class="kw">if</span> (response) <span class="kw">return</span> response;
+  <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">toll</span>(request);
+  <span class="kw">if</span> (result <span class="kw">instanceof</span> Response) <span class="kw">return</span> result;
+  <span class="kw">if</span> (result?.passthrough) {
+    <span class="kw">return</span> NextResponse.<span class="fn">next</span>({
+      <span class="prop">headers</span>: { <span class="str">'payment-response'</span>: result.paymentResponseHeader },
+    });
+  }
   <span class="kw">return</span> NextResponse.<span class="fn">next</span>();
 }
 
 <span class="kw">export const</span> config = {
-  <span class="prop">matcher</span>: [<span class="str">'/((?!_next|favicon.ico|.*\\.png|.*\\.jpg).*)' </span>]
+  <span class="prop">matcher</span>: [<span class="str">'/((?!_next|favicon.ico|.*\\.png|.*\\.jpg).*)'</span>],
 };</code></pre>
           </div>
         </div>
@@ -1282,18 +1357,38 @@ Steps to follow:
       <div class="guide-step">
         <div class="guide-step-num">3</div>
         <div class="guide-step-body">
-          <h4>Deploy and test</h4>
+          <h4>Where to put it</h4>
+          <div class="table-wrap">
+            <table class="options-table">
+              <thead>
+                <tr><th>Framework</th><th>File</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Next.js</td><td><code>middleware.js</code> (project root)</td></tr>
+                <tr><td>SvelteKit</td><td><code>src/hooks.server.js</code> — <code>handle({ event, resolve })</code>, call <code>toll(event.request)</code></td></tr>
+                <tr><td>Cloudflare Workers</td><td><code>export default { async fetch(request) }</code></td></tr>
+                <tr><td>Bun</td><td><code>Bun.serve({ async fetch(request) })</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="color:var(--muted);font-size:14px;margin-top:12px;">After <code>toll(request)</code>, continue your handler; if <code>result?.passthrough</code>, attach <code>payment-response</code> to the outgoing response headers.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num">4</div>
+        <div class="guide-step-body">
+          <h4>Test</h4>
           <div class="terminal">
             <div class="terminal-bar">
               <div class="terminal-dot" style="background:#ffffff"></div>
               <div class="terminal-dot" style="background:#ffffff"></div>
               <div class="terminal-dot" style="background:#ffffff"></div>
             </div>
-            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">&lt;your deploy command&gt;</span>
-<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
-<span class="t-red">402 Payment Required</span>
+            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
+<span class="t-red">402 Payment Required</span>  <span class="t-out">← agent blocked</span>
+
 <span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" https://your-site.example/</span>
-<span class="t-green">normal page response</span></code></pre>
+<span class="t-green">normal response</span>  <span class="t-out">← browser passes through</span></code></pre>
           </div>
         </div>
       </div>
@@ -1321,13 +1416,18 @@ Steps to follow:
    - exact file
    - .html
    - /index.html
-   Also reject traversal paths and read wallet from AGENT_TOLL_WALLET.
+   Also reject traversal paths and read wallet from PUBLISHER_WALLET.
 
    const fs = require('fs');
    const path = require('path');
    const { agentToll } = require('agent-toll');
 
-   const middleware = agentToll({ wallet: '0xYourWalletAddress' });
+   const middleware = agentToll({
+     wallet: process.env.PUBLISHER_WALLET,
+     facilitatorUrl: process.env.AGENT_TOLL_FACILITATOR_URL,
+     paymentRpcUrl: process.env.BASE_RPC_URL,
+     receiptSignerPrivateKey: process.env.RECEIPT_SIGNER_PRIVATE_KEY,
+   });
 
    const MIME = {
      '.html': 'text/html', '.css': 'text/css',
@@ -1350,8 +1450,6 @@ Steps to follow:
        }
      });
    };
-
-   Replace '0xYourWalletAddress' with my actual Base wallet address.
 
 3. Add a host routing config that forwards all requests to your gate function while preserving the original path (for example, as __site_path).
 
@@ -1429,7 +1527,7 @@ Steps to follow:
 <span class="cm">// - __site_path forwarding support</span>
 <span class="cm">// - traversal-safe file resolution</span>
 <span class="cm">// - exact/.html/index.html fallback</span>
-<span class="cm">// - AGENT_TOLL_WALLET env support</span></code></pre>
+<span class="cm">// - PUBLISHER_WALLET env support</span></code></pre>
           </div>
         </div>
       </div>
@@ -1457,210 +1555,6 @@ Steps to follow:
       </div>
     </div>
   </div>
-
-  <!-- FETCH RUNTIMES -->
-  <div class="tab-panel" id="tab-fetch">
-    <div class="agent-prompt-block" id="prompt-fetch">
-      <div class="prompt-textarea-wrap">
-        <div class="prompt-header">
-          <div class="prompt-header-left">
-            <span class="prompt-badge">Agent Prompt</span>
-            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
-          </div>
-          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-        </div>
-        <textarea class="prompt-textarea" readonly>Add the agent-toll package to my Fetch-based runtime so AI agents pay for access.
-
-Core steps (applies to all Fetch runtimes):
-1. Install the package:
-   npm install agent-toll
-2. Import and create toll middleware:
-   import { agentTollFetch } from 'agent-toll';
-   const toll = agentTollFetch({ wallet: '0xYourWalletAddress' });
-3. In the runtime's request handler, call:
-   const response = await toll(request);
-   if (response) return response;
-   // continue normal request handling
-4. Replace '0xYourWalletAddress' with my real Base wallet.
-5. Verify:
-   curl -H "User-Agent: GPTBot" <url>  -> expect 402 Payment Required
-   curl -A "Mozilla/5.0" <url>         -> expect normal response
-
-Runtime-specific appendices:
-- SvelteKit: add to src/hooks.server.js inside handle({ event, resolve }) using toll(event.request) before resolve(event).
-- Cloudflare Workers: add to worker.js/default export fetch(request) before fetch(request).
-- Bun: add to server.ts in Bun.serve({ fetch(request) { ... }}) before returning app response. Use bun add agent-toll if Bun is your package manager.</textarea>
-      </div>
-    </div>
-    <p style="color:var(--muted);font-size:15px;margin-bottom:20px;">Use this when your runtime handles standard Fetch <code>Request</code> objects. Same pattern, different file path.</p>
-    <div class="guide-steps">
-      <div class="guide-step">
-        <div class="guide-step-num">1</div>
-        <div class="guide-step-body">
-          <h4>Core pattern (<code>agentTollFetch()</code>)</h4>
-          <div class="code-block">
-            <div class="code-header"><span class="code-filename">generic fetch runtime</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code><span class="kw">import</span> { agentTollFetch } <span class="kw">from</span> <span class="str">'agent-toll'</span>;
-
-<span class="kw">const</span> toll = <span class="fn">agentTollFetch</span>({ <span class="prop">wallet</span>: <span class="str">'0xYourWalletAddress'</span> });
-
-<span class="kw">export async function</span> <span class="fn">handleRequest</span>(request) {
-  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
-  <span class="kw">if</span> (response) <span class="kw">return</span> response;
-  <span class="cm">// continue your normal response logic</span>
-  <span class="kw">return new</span> <span class="fn">Response</span>(<span class="str">'Hello world'</span>);
-}</code></pre>
-          </div>
-        </div>
-      </div>
-      <div class="guide-step">
-        <div class="guide-step-num">2</div>
-        <div class="guide-step-body">
-          <h4>Runtime-specific file targets</h4>
-          <div class="code-block">
-            <div class="code-header"><span class="code-filename">SvelteKit — src/hooks.server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code><span class="kw">export async function</span> <span class="fn">handle</span>({ event, resolve }) {
-  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(event.request);
-  <span class="kw">if</span> (response) <span class="kw">return</span> response;
-  <span class="kw">return</span> <span class="fn">resolve</span>(event);
-}</code></pre>
-          </div>
-          <div class="code-block">
-            <div class="code-header"><span class="code-filename">Cloudflare Worker — worker.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code><span class="kw">export default</span> {
-  <span class="kw">async</span> <span class="fn">fetch</span>(request) {
-    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
-    <span class="kw">if</span> (response) <span class="kw">return</span> response;
-    <span class="kw">return</span> <span class="fn">fetch</span>(request);
-  }
-};</code></pre>
-          </div>
-          <div class="code-block">
-            <div class="code-header"><span class="code-filename">Bun — server.ts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code>Bun.<span class="fn">serve</span>({
-  <span class="kw">async</span> <span class="fn">fetch</span>(request) {
-    <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">toll</span>(request);
-    <span class="kw">if</span> (response) <span class="kw">return</span> response;
-    <span class="kw">return new</span> <span class="fn">Response</span>(<span class="str">'Hello world'</span>);
-  }
-});</code></pre>
-          </div>
-        </div>
-      </div>
-      <div class="guide-step">
-        <div class="guide-step-num">3</div>
-        <div class="guide-step-body">
-          <h4>Verify bot vs browser behavior</h4>
-          <div class="terminal">
-            <div class="terminal-bar">
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-            </div>
-            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" https://your-site.example/</span>
-<span class="t-red">402 Payment Required</span>  <span class="t-out">← bot blocked</span>
-
-<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" https://your-site.example/</span>
-<span class="t-green">normal app response</span>  <span class="t-out">← browser passes through</span></code></pre>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LOCAL TEST -->
-  <div class="tab-panel" id="tab-local">
-    <div class="agent-prompt-block" id="prompt-local">
-      <div class="prompt-textarea-wrap">
-        <div class="prompt-header">
-          <div class="prompt-header-left">
-            <span class="prompt-badge">Agent Prompt</span>
-            <span class="prompt-hint">Paste into Claude Code, Cursor, or any coding agent</span>
-          </div>
-          <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-        </div>
-        <textarea class="prompt-textarea" readonly>Create a minimal local test server using agent-toll and Express so I can see a 402 Payment Required response fire for bot user-agents. No existing project needed — create a fresh throwaway folder.
-
-Steps to follow:
-
-1. Create and set up a test folder:
-   mkdir toll-test && cd toll-test
-   npm init -y && npm install agent-toll express
-
-2. Create server.js in that folder with this content:
-
-   const express = require('express');
-   const { agentToll } = require('agent-toll');
-
-   const app = express();
-   app.use(agentToll()); // no wallet = operator gets 100% (fine for testing)
-   app.get('/', (req, res) => res.send('Hello human!'));
-   app.listen(3000, () => console.log('Running on http://localhost:3000'));
-
-3. Start the server:
-   node server.js
-
-4. In a second terminal, test it:
-   curl -H "User-Agent: GPTBot" http://localhost:3000/    → should return 402 ✓
-   curl -A "Mozilla/5.0" http://localhost:3000/           → should return "Hello human!" ✓</textarea>
-      </div>
-    </div>
-    <p style="color:var(--muted);font-size:15px;margin-bottom:20px;" class="local-hint">Just want to see a 402 fire? Create a throwaway folder and run this — no website needed.</p>
-    <div class="guide-steps">
-      <div class="guide-step">
-        <div class="guide-step-num">1</div>
-        <div class="guide-step-body">
-          <h4>Set up a test folder</h4>
-          <div class="terminal">
-            <div class="terminal-bar">
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-            </div>
-            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">mkdir toll-test && cd toll-test</span>
-<span class="t-prompt">$</span> <span class="t-cmd">npm init -y && npm install agent-toll express</span></code></pre>
-          </div>
-        </div>
-      </div>
-      <div class="guide-step">
-        <div class="guide-step-num">2</div>
-        <div class="guide-step-body">
-          <h4>Create <code>server.js</code></h4>
-          <div class="code-block">
-            <div class="code-header"><span class="code-filename">server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
-<span class="kw">const</span> { agentToll } = <span class="fn">require</span>(<span class="str">'agent-toll'</span>);
-
-<span class="kw">const</span> app = <span class="fn">express</span>();
-app.<span class="fn">use</span>(<span class="fn">agentToll</span>()); <span class="cm">// no wallet = operator gets 100%</span>
-app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'Hello human!'</span>));
-app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.<span class="fn">log</span>(<span class="str">'Running on http://localhost:3000'</span>));</code></pre>
-          </div>
-        </div>
-      </div>
-      <div class="guide-step">
-        <div class="guide-step-num">3</div>
-        <div class="guide-step-body">
-          <h4>Run and test</h4>
-          <div class="terminal">
-            <div class="terminal-bar">
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-              <div class="terminal-dot" style="background:#ffffff"></div>
-            </div>
-            <pre><code><span class="t-prompt">$</span> <span class="t-cmd">node server.js</span>
-
-<span class="t-out"># In another terminal:</span>
-<span class="t-prompt">$</span> <span class="t-cmd">curl -H "User-Agent: GPTBot" http://localhost:3000/</span>
-<span class="t-red">402 Payment Required</span>  ✓
-
-<span class="t-prompt">$</span> <span class="t-cmd">curl -A "Mozilla/5.0" http://localhost:3000/</span>
-<span class="t-green">Hello human!</span>          ✓</code></pre>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <hr />
@@ -1669,7 +1563,7 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
 <section id="options">
   <div class="section-label">Configuration</div>
   <h2>Options</h2>
-  <p class="section-sub">All options are optional. The only one you'll usually set is <code>wallet</code>.</p>
+  <p class="section-sub">Pass options to <code>agentToll()</code> or <code>agentTollFetch()</code>. <code>wallet</code> / <code>publisherWallet</code> is required in production (use <code>paymentProvider</code> mock only in tests).</p>
   <div class="table-wrap">
     <table class="options-table">
       <thead>
@@ -1681,9 +1575,24 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
       </thead>
       <tbody>
         <tr>
-          <td><code class="opt-name">wallet</code></td>
+          <td><code class="opt-name">wallet</code> / <code class="opt-name">publisherWallet</code></td>
+          <td><span class="opt-default">required</span></td>
+          <td>Your Base wallet address. Receives USDC on-chain — no platform fee.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">facilitatorUrl</code></td>
+          <td><span class="opt-default">env</span></td>
+          <td>Hosted x402 facilitator (<code>AGENT_TOLL_FACILITATOR_URL</code>). Calls <code>POST /settle</code> — no gas wallet needed.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">facilitatorToken</code></td>
           <td><span class="opt-default">none</span></td>
-          <td>Your Base wallet address. Omit → operator receives 100% of payments.</td>
+          <td>Optional facilitator API token (<code>AGENT_TOLL_FACILITATOR_TOKEN</code>). Extra hostnames via <code>AGENT_TOLL_FACILITATOR_ALLOWLIST</code>.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">facilitatorPrivateKey</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Self-hosted settlement (<code>FACILITATOR_PRIVATE_KEY</code>). Your wallet pays gas on Base. Use instead of <code>facilitatorUrl</code>.</td>
         </tr>
         <tr>
           <td><code class="opt-name">receiptTtlSeconds</code></td>
@@ -1692,13 +1601,13 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
         </tr>
         <tr>
           <td><code class="opt-name">paymentRpcUrl</code></td>
-          <td><span class="opt-default">mainnet.base.org</span></td>
-          <td>Base RPC URL for verifying on-chain payments. Use a dedicated provider for high-traffic production.</td>
+          <td><span class="opt-default">https://mainnet.base.org</span></td>
+          <td>Base RPC for on-chain settlement verify (<code>BASE_RPC_URL</code>). Required with hosted facilitator or self-hosted path.</td>
         </tr>
         <tr>
-          <td><code class="opt-name">maxRequestsPerMinute</code></td>
+          <td><code class="opt-name">maxRequestsPerWindow</code></td>
           <td><span class="opt-default">none</span></td>
-          <td>Rate limit per agent wallet per minute. Unset by default — no rate limiting.</td>
+          <td>Rate limit per agent per window (<code>rateLimitWindowSeconds</code>, default 60). Unset by default — no rate limiting.</td>
         </tr>
         <tr>
           <td><code class="opt-name">maxSpendPerScope</code></td>
@@ -1712,33 +1621,53 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
         </tr>
         <tr>
           <td><code class="opt-name">metrics</code></td>
-          <td><span class="opt-default">true</span></td>
-          <td>Enable Prometheus-style metrics at <code>/metrics</code>. Enabled by default.</td>
+          <td><span class="opt-default">false</span></td>
+          <td>Enable Prometheus metrics. Off unless <code>metrics: true</code> or <code>MIDDLEWARE_METRICS=true</code>. Pair with <code>metricsPath</code>.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">metricsPath</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Route path for metrics (e.g. <code>'/metrics'</code>). Required to expose the endpoint — not set by default.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">metricsApiKey</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Protect the metrics route in production. Recommended when <code>metrics</code> is enabled.</td>
         </tr>
         <tr>
           <td><code class="opt-name">receiptStorePath</code></td>
-          <td><span class="opt-default">.agent-toll-receipts.json</span></td>
-          <td>Path to persist receipts to disk (Node.js only). Receipts survive restarts. Use a custom <code>store</code> for distributed deployments.</td>
+          <td><span class="opt-default">none</span></td>
+          <td>Path to persist receipts/spend state to disk (Node.js). Omit → in-memory <code>MemoryStore</code> (receipts lost on restart).</td>
         </tr>
         <tr>
           <td><code class="opt-name">store</code></td>
-          <td><span class="opt-default">FileStore</span></td>
-          <td>Custom store object for Redis/KV/etc. Useful for horizontal scaling.</td>
+          <td><span class="opt-default">MemoryStore</span></td>
+          <td>Custom store (<code>FileStore</code>, Redis/KV, etc.). Pass <code>receiptStorePath</code> for file-backed storage.</td>
         </tr>
         <tr>
           <td><code class="opt-name">receiptSigningUrl</code></td>
           <td><span class="opt-default">none</span></td>
-          <td>URL of a remote signing platform. Required for serverless/multi-replica deployments where a stable local key is unavailable. Must be paired with <code>receiptSigningToken</code>.</td>
+          <td>Remote receipt signing (<code>AGENT_TOLL_RECEIPT_SIGNING_URL</code> + <code>AGENT_TOLL_RECEIPT_SIGNING_TOKEN</code> + <code>AGENT_TOLL_RECEIPT_SIGNER_ADDRESS</code>). For serverless/multi-replica.</td>
         </tr>
         <tr>
           <td><code class="opt-name">receiptSigningToken</code></td>
           <td><span class="opt-default">none</span></td>
-          <td>Shared secret to authenticate with the remote signing platform.</td>
+          <td>Shared secret for remote signing (<code>AGENT_TOLL_RECEIPT_SIGNING_TOKEN</code>).</td>
         </tr>
         <tr>
           <td><code class="opt-name">receiptSignerPrivateKey</code></td>
-          <td><span class="opt-default">auto-generated</span></td>
-          <td>Explicit private key for signing receipts locally. Omit to auto-generate and persist to <code>receiptStorePath</code>.</td>
+          <td><span class="opt-default">none</span></td>
+          <td>Local key (<code>RECEIPT_SIGNER_PRIVATE_KEY</code>). Non-production may auto-create <code>.agent-toll-signer.json</code>. Production requires this or remote signing env vars.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">humanBypass</code></td>
+          <td><span class="opt-default">true</span></td>
+          <td>Real browsers skip payment. Set <code>false</code> to require payment from all clients.</td>
+        </tr>
+        <tr>
+          <td><code class="opt-name">paymentProvider</code></td>
+          <td><span class="opt-default">none</span></td>
+          <td>Mock chain for tests only — no real USDC settlement. Do not use in production.</td>
         </tr>
       </tbody>
     </table>
@@ -1748,12 +1677,17 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
     <div class="code-block">
       <div class="code-header"><span class="code-filename">Full example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
       <pre><code><span class="fn">agentToll</span>({
-  <span class="prop">wallet</span>: <span class="str">'0xYourWallet'</span>,
+  <span class="prop">wallet</span>: process.env.<span class="prop">PUBLISHER_WALLET</span>,
+  <span class="prop">facilitatorUrl</span>: process.env.<span class="prop">AGENT_TOLL_FACILITATOR_URL</span>,
+  <span class="prop">paymentRpcUrl</span>: process.env.<span class="prop">BASE_RPC_URL</span>,
+  <span class="prop">receiptSignerPrivateKey</span>: process.env.<span class="prop">RECEIPT_SIGNER_PRIVATE_KEY</span>,
   <span class="prop">receiptTtlSeconds</span>: <span class="num">300</span>,
-  <span class="prop">maxRequestsPerMinute</span>: <span class="num">60</span>,
+  <span class="prop">maxRequestsPerWindow</span>: <span class="num">60</span>,
   <span class="prop">maxSpendPerScope</span>: <span class="str">'1.0'</span>,
   <span class="prop">maxSpendTotal</span>: <span class="str">'10.0'</span>,
   <span class="prop">metrics</span>: <span class="kw">true</span>,
+  <span class="prop">metricsPath</span>: <span class="str">'/metrics'</span>,
+  <span class="prop">metricsApiKey</span>: process.env.<span class="prop">METRICS_API_KEY</span>,
 })</code></pre>
     </div>
   </div>
@@ -1765,31 +1699,36 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
 <section id="about">
   <div class="section-label">About</div>
   <h2>What Agentoll is</h2>
-  <p class="about-lead"><strong>Agentoll</strong> is server-side middleware you add in front of your existing routes. It classifies each request: real browser traffic continues as usual; automated agents and crawlers hit a <strong>402 Payment Required</strong> challenge with payment instructions, settle per that challenge, then retry with proof. The middleware verifies payment and issues a <strong>short-lived signed receipt</strong> so they are not charged again for every request.</p>
+  <p class="about-lead"><strong>Agentoll</strong> is HTTP middleware for computer-to-computer transactions. When an automated client (script, API worker, bot, or AI agent) calls your service, it pays a micro-amount in USDC via <strong>x402 v2 on Base</strong> — no accounts, no invoices, just <strong>402 Payment Required</strong> → sign → retry. Human browsers pass through without payment by default. USDC goes directly to your wallet — no platform fee.</p>
+
+  <div class="about-block">
+    <h3>How it works</h3>
+    <p>Automated client → <strong>402</strong> + <code>payment-required</code> → signs USDC (EIP-3009) to your wallet → retries with <code>payment-signature</code> → facilitator settles on-chain (you verify via RPC) → signed receipt issued (~5 min) → your response. Human browsers pass through by default. Valid receipts return <strong>200</strong> without paying again until expiry (<code>extensions["agent-toll"].info.receipt</code>).</p>
+  </div>
 
   <div class="about-block">
     <h3>Why it exists</h3>
-    <p>AI systems and bots can pull your content or APIs at scale without your consent or compensation. Agentoll is a practical gate: you keep your app structure, add one integration layer, and only automated clients that complete payment get through protected paths.</p>
+    <p>Automated clients can call your APIs and pull content at scale without accounts or compensation. Agentoll is a toll booth for machines: your server speaks x402; other machines pay in USDC to pass. You keep your app structure and add one integration layer.</p>
   </div>
 
   <div class="about-block">
     <h3>What you add</h3>
-    <p>Install the npm package and wire <code>agentToll()</code> (Express-style) or <code>agentTollFetch()</code> (Fetch runtimes like Next.js middleware). You optionally set a wallet address (<code>0x…</code>) to receive payouts. You do not build your own payment verification — that and receipts are handled by the middleware.</p>
+    <p>Install the npm package and wire <code>agentToll()</code> (Express) or <code>agentTollFetch()</code> (Next.js, Workers, SvelteKit, Bun). Set <code>PUBLISHER_WALLET</code>, a hosted <code>AGENT_TOLL_FACILITATOR_URL</code> (or <code>FACILITATOR_PRIVATE_KEY</code> for self-hosted), <code>BASE_RPC_URL</code>, and receipt signing. Settlement and receipts are handled by the middleware — you do not implement x402 verification yourself.</p>
   </div>
 
   <div class="about-block">
     <h3>Defaults (at a glance)</h3>
-    <p>Typical challenge amount is a tiny USDC sum per receipt; receipts default to about <strong>five minutes</strong> of reuse. With a publisher wallet configured, revenue is split between you and the platform operator; without a wallet, proceeds go to the operator (useful for testing).</p>
+    <p>Typical challenge amount is a tiny USDC sum per receipt; receipts default to about <strong>five minutes</strong> (<code>receiptTtlSeconds: 300</code>). <code>humanBypass</code> is <strong>true</strong> by default so real browsers skip payment. USDC goes directly to your <code>wallet</code> / <code>publisherWallet</code> — no platform fee.</p>
   </div>
 
   <div class="callout" style="margin-top:28px;max-width:720px;">
-    <strong>Scope it deliberately.</strong> Toll applied globally can block search crawlers (for example Googlebot). Apply middleware only to routes you want to monetize or protect. <strong>Agentoll is in private beta</strong> — fit for pilots and early traffic, not a guarantee of production SLA.
+    <strong>Scope it deliberately.</strong> Toll applied globally can block search crawlers (for example Googlebot). Apply middleware only to routes you want to monetize or protect. <strong>Agentoll is in beta</strong> — fit for pilots and early traffic, not a guarantee of production SLA.
   </div>
 </section>
 
 <div class="conversion-callout">
   <h3>Ready to monetize your AI traffic?</h3>
-  <p>Start with one command, then paste one middleware line into your app.</p>
+  <p>Start with one command, then mount middleware before your routes (see production keys for live settlement).</p>
   <div class="hero-actions" style="margin-bottom:0;justify-content:flex-start;">
     <a class="btn btn-primary" href="#install">Install Agentoll</a>
     <a class="btn btn-secondary" href="https://www.npmjs.com/package/agent-toll" target="_blank">View npm package</a>
@@ -1800,7 +1739,7 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
 <footer>
   <p>
     <strong style="margin-right:8px;">Agentoll</strong>
-    <a href="https://www.npmjs.com/package/agent-toll" target="_blank">npm</a> &mdash; Private Beta
+    <a href="https://www.npmjs.com/package/agent-toll" target="_blank">npm</a> 
   </p>
 </footer>
 
@@ -1840,16 +1779,12 @@ app.<span class="fn">listen</span>(<span class="num">3000</span>, () => console.
     const label = document.getElementById('agent-mode-label');
     label.classList.toggle('active', on);
 
-    // Show/hide wallet callout
     document.getElementById('wallet-callout').classList.toggle('hidden', on);
 
-    // For each tab panel, toggle guide-steps ↔ agent prompt blocks
     document.querySelectorAll('.tab-panel').forEach(panel => {
       panel.querySelectorAll('.guide-steps').forEach(el => el.classList.toggle('hidden', on));
       panel.querySelectorAll('.agent-prompt-block').forEach(el => el.classList.toggle('visible', on));
-      // Static site tab has its own inner callout and hint paragraph
       panel.querySelectorAll('#static-site-callout').forEach(el => el.classList.toggle('hidden', on));
-      panel.querySelectorAll('.local-hint').forEach(el => el.classList.toggle('hidden', on));
     });
   }
 </script>

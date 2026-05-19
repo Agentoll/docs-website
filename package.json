@@ -1,7 +1,13 @@
 {
   "name": "agent-toll-docs",
   "private": true,
+  "scripts": {
+    "dev": "serve ."
+  },
   "dependencies": {
     "@vercel/analytics": "^1.5.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
   }
 }
