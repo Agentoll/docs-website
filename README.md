@@ -1,19 +1,33 @@
 # agent-toll-docs
 
-Reference website and documentation for Agentoll.
+Marketing site and publisher documentation for **Agentoll** — [https://agentoll.net](https://agentoll.net).
 
-## Related packages
+## Publisher docs
 
-- Middleware npm package: `agent-toll`
-- SDK npm package: `agent-toll-sdk`
+| Doc | Purpose |
+|-----|---------|
+| [register/index.html](register/index.html) | Register at `/register`, get embed snippet |
+| [GETTING_STARTED.md](GETTING_STARTED.md) | Register → embed → live |
+| [index.html](index.html) | Homepage |
+| [REFERENCE.md](REFERENCE.md) | URLs and embed attributes |
 
-## Update docs when packages change
+## Related
 
-1. Publish a new version from the `agent-toll` or `agent-toll-sdk` repo.
-2. Update version mentions/examples in this docs repo.
-3. Redeploy the docs site.
+| Role | URL |
+|------|-----|
+| API + script CDN | https://agentoll-middleware-p5aon.ondigitalocean.app |
+| API repo | `agent-toll` (DigitalOcean App Platform) |
 
-## External links
+## Local preview
 
-- Middleware package: <https://www.npmjs.com/package/agent-toll>
-- SDK package: <https://www.npmjs.com/package/agent-toll-sdk>
+```bash
+npm run dev
+```
+
+`/get-started` redirects to `/register` (see [vercel.json](vercel.json)).
+
+## Maintenance
+
+Grep for obsolete hosts before deploy: `api.agentoll.net`, `cdn.agent-toll.sh`, `npm install agent-toll` as a publisher path.
+
+See [PACKAGE_SOURCES.md](PACKAGE_SOURCES.md).

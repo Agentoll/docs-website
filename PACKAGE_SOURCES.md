@@ -1,11 +1,19 @@
 # Package Sources
 
-This docs site should always reference published npm packages, not local files.
+This docs site should reference production URLs and published npm packages.
 
-## npm packages
+## Production (script-tag SaaS)
 
-- `agent-toll`: https://www.npmjs.com/package/agent-toll
-- `agent-toll-sdk`: https://www.npmjs.com/package/agent-toll-sdk
+| Role | URL |
+|------|-----|
+| Marketing + register | https://agentoll.net/register |
+| API + embed script | https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js |
+
+## npm packages (not used for publisher onboarding)
+
+Publisher integration is the script tag only. Legacy npm packages may still exist for other use cases:
+
+- `agent-toll-sdk`: https://www.npmjs.com/package/agent-toll-sdk (automated clients calling tolled APIs)
 
 ## GitHub repositories
 
