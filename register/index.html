@@ -78,10 +78,12 @@
     }
 
     .wrap {
-      max-width: 480px;
+      max-width: 560px;
       margin: 0 auto;
       padding: 48px 20px 80px;
     }
+
+    .wrap.success-mode { max-width: 640px; }
 
     h1 {
       font-size: clamp(28px, 5vw, 36px);
@@ -111,7 +113,7 @@
       color: var(--muted);
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 10px 12px;
       margin-bottom: 18px;
@@ -134,6 +136,70 @@
       color: var(--muted);
       margin: -12px 0 18px;
     }
+
+    .tier-group {
+      margin-bottom: 18px;
+    }
+
+    .tier-option {
+      display: block;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .tier-option:hover { border-color: rgba(255, 255, 255, 0.35); }
+
+    .tier-option:has(input:checked) {
+      border-color: rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tier-option input {
+      width: auto;
+      margin: 0 10px 0 0;
+      vertical-align: middle;
+    }
+
+    .tier-option strong {
+      display: block;
+      font-size: 0.9375rem;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .tier-option span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-left: 26px;
+      line-height: 1.45;
+    }
+
+    .conditional-field { display: none; }
+    .conditional-field.visible { display: block; }
+
+    .advanced-toggle {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font: inherit;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      padding: 0;
+      margin: -8px 0 16px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .advanced-toggle:hover { color: var(--text); }
+
+    .advanced-panel { display: none; }
+    .advanced-panel.visible { display: block; }
 
     button[type="submit"] {
       width: 100%;
@@ -170,23 +236,40 @@
 
     .success-panel {
       display: none;
-      margin-top: 24px;
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 24px;
     }
 
     .success-panel.visible { display: block; }
 
-    .success-panel h2 {
-      font-size: 1.125rem;
+    .success-header h2 {
+      font-size: 1.25rem;
       margin: 0 0 8px;
       color: var(--success);
     }
 
-    .success-panel p { color: var(--muted); font-size: 0.875rem; margin: 0 0 16px; }
+    .success-header p { color: var(--muted); font-size: 0.875rem; margin: 0 0 24px; }
+
+    .success-block {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .success-block h3 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--text);
+    }
+
+    .success-block p {
+      color: var(--muted);
+      font-size: 0.8125rem;
+      margin: 0 0 12px;
+    }
 
     .field-block { margin-bottom: 16px; }
+    .field-block:last-child { margin-bottom: 0; }
 
     .field-block label { margin-bottom: 4px; }
 
@@ -203,7 +286,7 @@
       font-size: 0.75rem;
     }
 
-    textarea {
+    textarea, pre.dns-block {
       width: 100%;
       min-height: 88px;
       padding: 10px 12px;
@@ -214,6 +297,13 @@
       font-family: var(--mono);
       font-size: 0.75rem;
       resize: vertical;
+      white-space: pre-wrap;
+      margin: 0 0 12px;
+    }
+
+    pre.dns-block {
+      min-height: auto;
+      line-height: 1.5;
     }
 
     .copy-btn {
@@ -229,6 +319,8 @@
 
     .copy-btn:hover { border-color: rgba(255, 255, 255, 0.45); }
 
+    .copy-btn.full { margin-top: 8px; width: 100%; padding: 10px; }
+
     .warn {
       font-size: 0.8125rem;
       color: #e6b84d;
@@ -237,6 +329,75 @@
       background: rgba(230, 184, 77, 0.08);
       border-radius: 8px;
       border: 1px solid rgba(230, 184, 77, 0.25);
+    }
+
+    .info {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .info a { color: var(--text); }
+
+    .meta-list {
+      list-style: none;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+
+    .meta-list li { margin-bottom: 6px; }
+    .meta-list strong { color: var(--text); font-weight: 600; }
+
+    .verify-cmd {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      word-break: break-all;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 8px 0 12px;
+    }
+
+    .checklist {
+      margin: 0;
+      padding-left: 1.2rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+    }
+
+    .checklist li { margin-bottom: 6px; }
+
+    .faq {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .faq h2 {
+      font-size: 1rem;
+      margin: 0 0 16px;
+    }
+
+    .faq-item {
+      margin-bottom: 16px;
+    }
+
+    .faq-item dt {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .faq-item dd {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin: 0;
     }
 
     .page-footer {
@@ -266,55 +427,137 @@
   <a class="nav-badge" href="/register">Get started</a>
 </nav>
 
-<div class="wrap">
+<div class="wrap" id="page-wrap">
   <h1>Protect your site from bots</h1>
-  <p class="lead">Add one script tag. Humans pass through free. Bots pay a micro USDC toll on Base.</p>
+  <p class="lead" id="page-lead">Add one line to your site. Humans browse free; bots pay a micro USDC toll in the browser.</p>
 
   <form id="register-form" novalidate>
     <label for="domain">Website domain</label>
     <input id="domain" name="domain" type="text" placeholder="example.com" required autocomplete="url" />
-    <p class="hint">Hostname only — no https:// or paths. Must match where you embed the script.</p>
+    <p class="hint">Apex or hostname — e.g. <code>example.com</code> or <code>www.example.com</code>. No <code>https://</code> or paths.</p>
 
     <label for="walletAddress">Wallet address (USDC payout)</label>
-    <input id="walletAddress" name="walletAddress" type="text" placeholder="0x…" required pattern="^0x[a-fA-F0-9]{40}$" autocomplete="off" />
-    <p class="hint">Locked at registration. Used for revenue attribution and future payout.</p>
+    <input id="walletAddress" name="walletAddress" type="text" placeholder="0x…" required autocomplete="off" />
+    <p class="hint">0x-prefixed EVM address (42 characters). Locked at registration.</p>
 
     <label for="email">Email (optional)</label>
     <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
-    <p class="hint">Support and account recovery only — not required for the script to work.</p>
+    <p class="hint">Ops contact — defaults to <code>ops@yourdomain</code> if omitted.</p>
+
+    <fieldset class="tier-group">
+      <legend style="font-size:0.8125rem;font-weight:600;color:var(--muted);margin-bottom:10px">Integration</legend>
+
+      <label class="tier-option">
+        <input type="radio" name="tier" value="script" checked />
+        <strong>Script only</strong>
+        <span>In-browser bot detection + payment wall on pages with the embed.</span>
+      </label>
+
+      <label class="tier-option">
+        <input type="radio" name="tier" value="gate" />
+        <strong>Script + HTTP gate (CNAME)</strong>
+        <span>Same script, plus HTTP 402 + x402 for <code>curl</code> and agents on your public URL. Requires DNS CNAME after signup.</span>
+      </label>
+    </fieldset>
+
+    <div id="origin-url-field" class="conditional-field">
+      <label for="originUrl">Backend URL (where your site is hosted)</label>
+      <input id="originUrl" name="originUrl" type="url" placeholder="https://my-app.vercel.app" />
+      <p class="hint">Where your site is actually hosted today (e.g. Vercel or Netlify URL). Do <strong>not</strong> enter <code>https://www.yourdomain.com</code> — that creates a proxy loop after you CNAME.</p>
+    </div>
+
+    <button type="button" class="advanced-toggle" id="advanced-toggle" aria-expanded="false">Show advanced options</button>
+    <div id="advanced-panel" class="advanced-panel">
+      <label for="sessionTtlSeconds">Session TTL (seconds)</label>
+      <input id="sessionTtlSeconds" name="sessionTtlSeconds" type="number" min="1" max="300" placeholder="Default from API" />
+      <p class="hint">Optional — 1–300 seconds.</p>
+    </div>
 
     <button type="submit" id="submit-btn">Create account</button>
     <div id="form-error" class="error" role="alert"></div>
   </form>
 
   <div id="success-panel" class="success-panel" aria-live="polite">
-    <h2>You're registered</h2>
-    <p>Save your API key now — it won't be shown again.</p>
-
-    <div class="field-block">
-      <label>Publisher ID</label>
-      <div class="copy-row">
-        <input id="out-publisher-id" readonly />
-        <button type="button" class="copy-btn" data-copy="out-publisher-id">Copy</button>
-      </div>
+    <div class="success-header">
+      <h2>You're registered</h2>
+      <p>Save your API key now — it is shown once and used for <code>/v1/publishers/me/*</code> stats.</p>
     </div>
 
-    <div class="field-block">
-      <label>API key (dashboard)</label>
-      <div class="copy-row">
-        <input id="out-api-key" readonly />
-        <button type="button" class="copy-btn" data-copy="out-api-key">Copy</button>
+    <section class="success-block" id="block-credentials">
+      <h3>1. Credentials</h3>
+      <div class="field-block">
+        <label>Publisher ID</label>
+        <div class="copy-row">
+          <input id="out-publisher-id" readonly />
+          <button type="button" class="copy-btn" data-copy="out-publisher-id">Copy</button>
+        </div>
       </div>
-    </div>
+      <div class="field-block">
+        <label>API key</label>
+        <div class="copy-row">
+          <input id="out-api-key" readonly />
+          <button type="button" class="copy-btn" data-copy="out-api-key">Copy</button>
+        </div>
+      </div>
+      <p class="warn">Store your API key securely before leaving this page. It will not be shown again.</p>
+    </section>
 
-    <div class="field-block">
-      <label>Embed snippet</label>
+    <section class="success-block" id="block-embed">
+      <h3>2. Embed snippet</h3>
+      <p>Paste into <code>&lt;head&gt;</code> on your registered hostname. Works immediately — no CNAME required for script-only protection.</p>
       <textarea id="out-snippet" readonly></textarea>
-      <button type="button" class="copy-btn" style="margin-top:8px;width:100%" data-copy="out-snippet">Copy snippet</button>
-    </div>
+      <button type="button" class="copy-btn full" data-copy="out-snippet">Copy snippet</button>
+      <p class="info" id="cname-script-note" style="display:none">After your CNAME and SSL are live, you may switch <code>src</code> to <code>https://<span id="cname-hostname-note"></span>/v1/agent-toll.js</code> (same origin as your site). The API-hosted script above works before and after CNAME.</p>
+    </section>
 
-    <p class="warn">Store your API key securely. Use it with <code style="font-family:var(--mono)">X-Publisher-Key</code> for stats at <code style="font-family:var(--mono)">/v1/publishers/me/*</code>.</p>
+    <section class="success-block" id="block-cname" style="display:none">
+      <h3>3. CNAME setup</h3>
+      <p>Point your public hostname at our proxy. Test on staging first if you can.</p>
+
+      <pre class="dns-block" id="out-dns-primary"></pre>
+      <button type="button" class="copy-btn full" data-copy-text="out-dns-primary">Copy DNS record</button>
+
+      <p class="hint" style="margin-top:16px">Recommended staging record:</p>
+      <pre class="dns-block" id="out-dns-staging"></pre>
+      <button type="button" class="copy-btn full" data-copy-text="out-dns-staging">Copy staging record</button>
+
+      <ul class="meta-list" id="proxy-meta"></ul>
+
+      <p class="info" id="proxy-instructions"></p>
+
+      <p class="warn">After you add the CNAME, email <a href="mailto:support@agentoll.net">support@agentoll.net</a> or open a ticket so we can attach your hostname on DigitalOcean App Platform and provision SSL.</p>
+    </section>
+
+    <section class="success-block" id="block-verify" style="display:none">
+      <h3>4. Verify HTTP gate</h3>
+      <p>After CNAME + SSL are live, run:</p>
+      <div class="verify-cmd" id="out-verify-cmd"></div>
+      <button type="button" class="copy-btn full" data-copy-text="out-verify-cmd">Copy command</button>
+      <ul class="checklist">
+        <li>Expected: <code>HTTP/2 402</code> or <code>HTTP/1.1 402</code></li>
+        <li>Response should include a <code>payment-required</code> header</li>
+        <li>Until CNAME + SSL, the embed script still protects pages where it is installed</li>
+      </ul>
+    </section>
   </div>
+
+  <section class="faq" id="faq-section">
+    <h2>FAQ</h2>
+    <dl>
+      <div class="faq-item">
+        <dt>Is CNAME safe?</dt>
+        <dd>Yes — only the hostname you point (e.g. <code>www</code>). Remove the CNAME to roll back.</dd>
+      </div>
+      <div class="faq-item">
+        <dt>Do you need our DNS password?</dt>
+        <dd>No. You add one CNAME at your DNS provider.</dd>
+      </div>
+      <div class="faq-item">
+        <dt>Does curl get blocked before CNAME?</dt>
+        <dd>HTTP 402 on your public URL requires CNAME + SSL. The script still works on pages where it is embedded.</dd>
+      </div>
+    </dl>
+  </section>
 
   <footer class="page-footer">
     Payments and x402 settlement are handled by Agent Toll — no facilitator setup on your side.
@@ -324,27 +567,123 @@
 
 <script>
   (function () {
+    const PRODUCTION_API = 'https://agentoll-middleware-p5aon.ondigitalocean.app';
     const params = new URLSearchParams(window.location.search);
     const metaApi = document.querySelector('meta[name="agent-toll-api-base"]');
-    let apiBase = (params.get('api') || metaApi?.content || '').replace(/\/$/, '');
-    if (!apiBase && window.location.port === '8787') {
+    let apiBase = (params.get('api') || metaApi?.content || PRODUCTION_API).replace(/\/$/, '');
+    if (!params.get('api') && !metaApi?.content && window.location.hostname === 'localhost' && window.location.port === '8787') {
       apiBase = window.location.origin;
     }
-    if (!apiBase) apiBase = 'http://localhost:8787';
+
+    const ERROR_MESSAGES = {
+      wallet_and_domain_required: 'Domain and wallet are required.',
+      invalid_wallet: 'Invalid wallet address — use a 0x-prefixed address (42 characters).',
+      invalid_domain: 'Invalid domain.',
+      invalid_origin_url: 'Invalid backend URL — use http:// or https:// with no username/password.',
+      origin_url_loop: 'Backend URL cannot be your public site (would loop the proxy).',
+      domain_already_registered: 'This domain is already registered.',
+      session_ttl_max_300: 'Session TTL must be between 1 and 300 seconds.',
+      invalid_json: 'Invalid request — check your input and try again.',
+      registration_unavailable: 'Registration is temporarily unavailable. Try again shortly.',
+      registration_failed: 'Registration failed — try again.',
+      register_failed: 'Registration failed — try again.'
+    };
+
+    const LEAD_SCRIPT = 'Add one line to your site. Humans browse free; bots pay a micro USDC toll in the browser.';
+    const LEAD_GATE = 'Same script, plus HTTP-level protection: curl and agents get 402 Payment Required (x402) before your origin. Requires a DNS CNAME.';
 
     const form = document.getElementById('register-form');
     const errEl = document.getElementById('form-error');
     const successEl = document.getElementById('success-panel');
     const submitBtn = document.getElementById('submit-btn');
+    const pageLead = document.getElementById('page-lead');
+    const pageWrap = document.getElementById('page-wrap');
+    const originField = document.getElementById('origin-url-field');
+    const faqSection = document.getElementById('faq-section');
+    const tierInputs = document.querySelectorAll('input[name="tier"]');
+
+    function isHttpGate() {
+      return document.querySelector('input[name="tier"]:checked')?.value === 'gate';
+    }
+
+    function updateTierUi() {
+      const gate = isHttpGate();
+      originField.classList.toggle('visible', gate);
+      pageLead.textContent = gate ? LEAD_GATE : LEAD_SCRIPT;
+    }
+
+    tierInputs.forEach(function (input) {
+      input.addEventListener('change', updateTierUi);
+    });
+    updateTierUi();
+
+    document.getElementById('advanced-toggle').addEventListener('click', function () {
+      const panel = document.getElementById('advanced-panel');
+      const open = panel.classList.toggle('visible');
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+      this.textContent = open ? 'Hide advanced options' : 'Show advanced options';
+    });
 
     function normalizeDomain(raw) {
       let v = raw.trim().toLowerCase();
       try {
         if (v.includes('://')) v = new URL(v).hostname;
       } catch (_) {
-        v = v.split('/')[0];
+        v = v.split('/')[0].split('?')[0];
       }
-      return v.replace(/^www\./, '');
+      return v.replace(/\.$/, '');
+    }
+
+    function hostFromUrl(urlStr) {
+      try {
+        return new URL(urlStr).hostname.toLowerCase().replace(/\.$/, '');
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function domainsOverlap(domain, originHost) {
+      if (!domain || !originHost) return false;
+      if (domain === originHost) return true;
+      if (originHost === 'www.' + domain || domain === 'www.' + originHost) return true;
+      if (originHost.endsWith('.' + domain) || domain.endsWith('.' + originHost)) return true;
+      return false;
+    }
+
+    function validateOriginUrl(originUrl, domain) {
+      let parsed;
+      try {
+        parsed = new URL(originUrl.trim());
+      } catch (_) {
+        return 'Invalid backend URL — use a full http:// or https:// URL.';
+      }
+      if (parsed.username || parsed.password) {
+        return 'Backend URL must not include username or password.';
+      }
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return 'Backend URL must use http:// or https://.';
+      }
+      const originHost = parsed.hostname.toLowerCase();
+      if (domainsOverlap(domain, originHost)) {
+        return 'Backend URL cannot be your public site — that would loop the proxy after CNAME.';
+      }
+      const isLocalApi = apiBase.includes('localhost') || apiBase.includes('127.0.0.1');
+      const isLocalOrigin = originHost === 'localhost' || originHost === '127.0.0.1';
+      if (!isLocalApi && !isLocalOrigin && parsed.protocol !== 'https:') {
+        return 'Production backend URLs must use https:// (unless localhost).';
+      }
+      return null;
+    }
+
+    function validateWallet(wallet) {
+      return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
+    }
+
+    function friendlyError(data, status) {
+      const reason = data?.errorReason || data?.error;
+      if (reason && ERROR_MESSAGES[reason]) return ERROR_MESSAGES[reason];
+      if (status === 503) return 'Registration is temporarily unavailable. Try again shortly.';
+      return reason || 'Registration failed — try again.';
     }
 
     function showError(msg) {
@@ -356,30 +695,89 @@
       errEl.classList.remove('visible');
     }
 
+    function copyText(text, btn, defaultLabel) {
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = defaultLabel; }, 1500);
+      });
+    }
+
     document.querySelectorAll('[data-copy]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const id = btn.getAttribute('data-copy');
         const el = document.getElementById(id);
-        const text = el.value || el.textContent;
-        navigator.clipboard.writeText(text).then(function () {
-          btn.textContent = 'Copied';
-          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
-        });
+        copyText(el.value || el.textContent, btn, btn.textContent.includes('snippet') ? 'Copy snippet' : 'Copy');
       });
     });
+
+    document.querySelectorAll('[data-copy-text]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const id = btn.getAttribute('data-copy-text');
+        const el = document.getElementById(id);
+        const label = btn.textContent;
+        copyText(el.textContent, btn, label.replace(/^Copied.*/, label.includes('DNS') ? 'Copy DNS record' : label.includes('command') ? 'Copy command' : 'Copy'));
+      });
+    });
+
+    function cnameLabel(hostname) {
+      const parts = hostname.split('.');
+      if (parts.length <= 2) return parts[0] === 'www' ? 'www' : '@';
+      return parts[0];
+    }
+
+    function buildDnsBlock(hostname, target) {
+      return 'Type:   CNAME\nName:   ' + cnameLabel(hostname) + '          (label for ' + hostname + ')\nTarget: ' + target;
+    }
+
+    function buildStagingDns(domain, target) {
+      return 'staging.' + domain.replace(/^www\./, '') + '  CNAME  ' + target;
+    }
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       hideError();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Creating…';
 
       const domain = normalizeDomain(document.getElementById('domain').value);
       const walletAddress = document.getElementById('walletAddress').value.trim();
       const emailRaw = document.getElementById('email').value.trim();
+      const originRaw = document.getElementById('originUrl').value.trim();
+      const ttlRaw = document.getElementById('sessionTtlSeconds').value.trim();
+      const gate = isHttpGate();
+
+      if (!domain) {
+        showError('Domain is required.');
+        return;
+      }
+      if (!validateWallet(walletAddress)) {
+        showError('Invalid wallet address — use a 0x-prefixed address (42 characters).');
+        return;
+      }
+      if (gate && !originRaw) {
+        showError('Backend URL is required for Script + HTTP gate.');
+        return;
+      }
+      if (gate) {
+        const originErr = validateOriginUrl(originRaw, domain);
+        if (originErr) {
+          showError(originErr);
+          return;
+        }
+      }
+      if (ttlRaw) {
+        const ttl = Number(ttlRaw);
+        if (!Number.isInteger(ttl) || ttl < 1 || ttl > 300) {
+          showError('Session TTL must be between 1 and 300 seconds.');
+          return;
+        }
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating…';
 
       const body = { domain, walletAddress };
       if (emailRaw) body.email = emailRaw;
+      if (gate && originRaw) body.originUrl = originRaw;
+      if (ttlRaw) body.sessionTtlSeconds = Number(ttlRaw);
 
       try {
         const res = await fetch(apiBase + '/v1/publishers/register', {
@@ -390,26 +788,58 @@
         const data = await res.json().catch(function () { return {}; });
 
         if (!res.ok) {
-          showError(data.errorReason || data.error || 'Registration failed (' + res.status + ')');
+          showError(friendlyError(data, res.status));
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create account';
           return;
         }
 
-        const apiForEmbed = apiBase.replace(/\/$/, '');
-        const scriptSrc = apiForEmbed + '/v1/agent-toll.js';
+        const scriptSrc = apiBase + '/v1/agent-toll.js';
         const snippet =
-          '<script src="' + scriptSrc + '" data-publisher-id="' + data.publisherId +
-          '" data-api-base="' + apiForEmbed + '" async><\/script>';
+          '<script\n' +
+          '  src="' + scriptSrc + '"\n' +
+          '  data-publisher-id="' + data.publisherId + '"\n' +
+          '  async\n' +
+          '><\/script>';
 
         document.getElementById('out-publisher-id').value = data.publisherId;
         document.getElementById('out-api-key').value = data.apiKey;
         document.getElementById('out-snippet').value = snippet;
 
+        const proxy = data.proxySetup;
+        const hasCname = proxy && proxy.originUrl;
+
+        if (hasCname) {
+          const hostname = proxy.hostname;
+          const target = proxy.cnameTarget;
+          const apex = domain.replace(/^www\./, '');
+
+          document.getElementById('out-dns-primary').textContent = buildDnsBlock(hostname, target);
+          document.getElementById('out-dns-staging').textContent = buildStagingDns(apex, target);
+
+          document.getElementById('proxy-meta').innerHTML =
+            '<li><strong>Hostname:</strong> ' + hostname + '</li>' +
+            '<li><strong>CNAME target:</strong> ' + target + '</li>' +
+            '<li><strong>Backend (origin):</strong> ' + proxy.originUrl + '</li>';
+
+          document.getElementById('proxy-instructions').textContent = proxy.instructions || '';
+
+          document.getElementById('cname-hostname-note').textContent = hostname;
+          document.getElementById('cname-script-note').style.display = 'block';
+
+          const verifyCmd = 'curl -sI "https://' + hostname + '/" -H "User-Agent: curl/8"';
+          document.getElementById('out-verify-cmd').textContent = verifyCmd;
+
+          document.getElementById('block-cname').style.display = 'block';
+          document.getElementById('block-verify').style.display = 'block';
+        }
+
         form.style.display = 'none';
+        faqSection.style.display = 'none';
+        pageWrap.classList.add('success-mode');
         successEl.classList.add('visible');
-      } catch (err) {
-        showError('Could not reach API at ' + apiBase + '. Check CORS and REGISTRATION_CORS_ORIGINS.');
+      } catch (_) {
+        showError('Could not reach the registration API. If testing locally, ensure CORS includes your origin.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create account';
       }
