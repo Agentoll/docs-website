@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup — What is Agent-Toll? — Agentoll</title>
+  <meta name="description" content="Bot detection and x402 USDC micropayments on Base. Humans pass free; automated clients pay a micro toll." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup" class="active">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup" class="active">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>What is Agent-Toll?</h1>
+    <p class="lead">Bot detection plus x402 USDC micropayments on Base. Humans pass through free; automated clients pay a micro toll (~0.000002 USDC) to continue.</p>
+
+    <p><strong>Agentoll</strong> is hosted script-tag SaaS. You register once, paste one script tag in your site’s <code>&lt;head&gt;</code>, and go live. No npm install, DNS changes, or operator secrets on your side.</p>
+
+    <h2>How traffic is handled</h2>
+    <div class="mermaid-wrap">
+      <pre class="mermaid">flowchart LR
+  Human[Human browser] -->|script detects human| Pass[Free access]
+  Bot[Bot / agent / curl] -->|payment required| Pay[USDC on Base]
+  Pay --> Session[Session token]
+  Session --> Pass</pre>
+    </div>
+
+    <ul>
+      <li><strong>Humans</strong> — real browsers are detected and pass through with no payment or friction.</li>
+      <li><strong>Bots, curl, and agents</strong> — classified as automated; they pay a micro USDC toll on Base via x402, then receive a short-lived session token.</li>
+      <li><strong>No install for basic use</strong> — one script tag is enough for in-browser protection.</li>
+      <li><strong>Optional Node middleware</strong> — add the <code>agentoll</code> package if you need HTTP 402 blocking for curl and server-side routes.</li>
+    </ul>
+
+    <h2>Two setup paths</h2>
+    <div class="path-cards">
+      <a class="path-card" href="/setup/script">
+        <span class="tag">Default</span>
+        <h3>Script only</h3>
+        <p>Any website with a <code>&lt;head&gt;</code>. Register → embed → done. In-browser wall only.</p>
+      </a>
+      <a class="path-card" href="/setup/server-gate">
+        <span class="tag">Optional</span>
+        <h3>Script + server gate</h3>
+        <p>Node / Express / Next with a server. Same script plus <code>npm install agentoll</code> middleware. Blocks curl at HTTP 402.</p>
+      </a>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Path</th><th>Who</th><th>Blocks curl at HTTP layer?</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Script only</strong></td>
+          <td>Any site with <code>&lt;head&gt;</code></td>
+          <td>No (in-browser only)</td>
+        </tr>
+        <tr>
+          <td><strong>Script + server gate</strong></td>
+          <td>Node / Express / Next</td>
+          <td>Yes (HTTP 402)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>What you never configure</h2>
+    <p>Publishers do not set payment facilitator URLs, RPC endpoints, CDP keys, DNS proxy records, alternate origin URLs, or platform wallet addresses. Registration gives you a publisher ID and embed snippet; the platform runs settlement.</p>
+
+    <div class="callout">
+      <strong>Production URLs</strong>
+      Register at <a href="https://agentoll.net/register">agentoll.net/register</a>.
+      Script host: <code>https://agentoll-middleware-p5aon.ondigitalocean.app</code>.
+    </div>
+
+    <div class="cta-bar">
+      <h2>Ready to go live?</h2>
+      <p>Register your domain, copy the embed snippet, paste it in <code>&lt;head&gt;</code> — three steps.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+      <a class="btn btn-secondary" href="/setup/script">Script quickstart</a>
+    </div>
+
+    <footer class="doc-footer">
+      <p>Advanced: <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/ARCHITECTURE.md">Architecture</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">API contract</a></p>
+    </footer>
+  </article>
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

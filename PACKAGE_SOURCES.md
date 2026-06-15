@@ -1,24 +1,29 @@
 # Package Sources
 
-This docs site should reference production URLs and published npm packages.
+This docs site references production URLs and the v3 publisher integration path.
 
 ## Production (script-tag SaaS)
 
 | Role | URL |
 |------|-----|
-| Marketing + register | https://agentoll.net/register |
+| Marketing + setup | https://agentoll.net |
+| Register | https://agentoll.net/register |
 | API + embed script | https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js |
+| API health | https://agentoll-middleware-p5aon.ondigitalocean.app/health |
 
-## npm packages (not used for publisher onboarding)
+## npm (publishers)
 
-Publisher integration is the script tag only. Legacy npm packages may still exist for other use cases:
+| Package | Use |
+|---------|-----|
+| `agentoll` | Optional server gate (Node/Express HTTP 402) — https://www.npmjs.com/package/agentoll |
 
-- `agent-toll-sdk`: https://www.npmjs.com/package/agent-toll-sdk (automated clients calling tolled APIs)
+Publisher onboarding uses the hosted script tag. Optional server gate: the `agentoll` npm package.
+
+## Obsolete (audit before deploy)
+
+Remove legacy API hosts, legacy CDN hosts, self-hosted middleware install paths, DNS proxy setup, and old middleware helpers from publisher docs.
 
 ## GitHub repositories
 
-Set these after you create the remote repos:
-
-- `agent-toll`: `https://github.com/<your-org>/agent-toll`
-- `agent-toll-sdk`: `https://github.com/<your-org>/agent-toll-sdk`
-- `agent-toll-docs`: `https://github.com/<your-org>/agent-toll-docs`
+- `agent-toll`: https://github.com/agent-toll/agent-toll
+- `agent-toll-docs`: this repo

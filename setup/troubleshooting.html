@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Troubleshooting — Agentoll</title>
+  <meta name="description" content="Fix common Agentoll setup issues: origin mismatch, missing publisher ID, server gate." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting" class="active">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Troubleshooting</h1>
+    <p class="lead">Common symptoms and fixes for publisher setup.</p>
+
+    <table>
+      <thead>
+        <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Script does nothing</td>
+          <td>Missing <code>data-publisher-id</code></td>
+          <td>Add the attribute from <a href="/register">registration</a></td>
+        </tr>
+        <tr>
+          <td>API 403 <code>origin_mismatch</code></td>
+          <td>Page origin ≠ registered domain</td>
+          <td>Re-register the correct domain or align www vs apex</td>
+        </tr>
+        <tr>
+          <td>curl still gets 200</td>
+          <td>No server gate middleware</td>
+          <td>Install <code>agentoll</code> on your Node server — see <a href="/setup/server-gate">server gate</a></td>
+        </tr>
+        <tr>
+          <td>Payment wall on Chrome</td>
+          <td>Rare classify edge case</td>
+          <td>Check browser console; ensure a normal browser User-Agent</td>
+        </tr>
+        <tr>
+          <td>Registration 503</td>
+          <td>API or database unavailable</td>
+          <td>Retry later; check <code>/health</code> on the API host</td>
+        </tr>
+        <tr>
+          <td>Registration fails: domain already registered</td>
+          <td>Domain taken</td>
+          <td>Use the account that registered it or contact support</td>
+        </tr>
+        <tr>
+          <td>Could not reach API (browser)</td>
+          <td>CORS or network</td>
+          <td>Ensure you register from agentoll.net; API must allow the docs origin</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Health check</h2>
+    <pre><code>curl -s https://agentoll-middleware-p5aon.ondigitalocean.app/health</code></pre>
+
+    <div class="cta-bar">
+      <h2>Need a fresh start?</h2>
+      <p>Register with the exact hostname users visit.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+    </div>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

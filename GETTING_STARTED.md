@@ -1,15 +1,16 @@
 # Getting started with Agentoll
 
-Register your site, paste one script tag in `<head>`, and go live. No npm install, facilitator keys, or RPC configuration.
+**Default path:** register → embed → done (script only). Full guide: **[setup/script.html](setup/script.html)** on the site or [agentoll.net/setup/script](https://agentoll.net/setup/script).
 
 - **Site:** [agentoll.net](https://agentoll.net)
 - **Register:** [agentoll.net/register](https://agentoll.net/register)
+- **Setup hub:** [agentoll.net/setup](https://agentoll.net/setup)
 
 ---
 
 ## 1. Register
 
-Submit:
+Go to [agentoll.net/register](https://agentoll.net/register) and submit:
 
 - **Domain** — hostname only (must match where you embed the script)
 - **Wallet** — Base `0x…` address for revenue attribution
@@ -23,7 +24,6 @@ You receive `publisherId`, `apiKey` (shown once), and an embed snippet.
 <script
   src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
   data-publisher-id="pub_xxxxxxxx"
-  data-api-base="https://agentoll-middleware-p5aon.ondigitalocean.app"
   async
 ></script>
 ```
@@ -32,10 +32,20 @@ You receive `publisherId`, `apiKey` (shown once), and an embed snippet.
 
 ## 3. Done
 
-- **Human browsers** — script exits; no payment.
-- **Bots / agents** — classify → payment wall → USDC on Base → session JWT.
+- **Human browsers** — pass through free; no payment.
+- **Bots / agents** — classify → payment wall → USDC on Base → session token.
 
-Use your API key with `X-Publisher-Key` for `GET /v1/publishers/me/stats` and `/v1/publishers/me/payments`.
+Save your API key for optional [stats API](setup/stats.html) or [server gate](setup/server-gate.html). It is not needed in HTML for script-only.
+
+---
+
+## Optional: server gate
+
+For Node / Express sites that need HTTP 402 for curl: [setup/server-gate.html](setup/server-gate.html).
+
+```bash
+npm install agentoll
+```
 
 ---
 
@@ -44,4 +54,6 @@ Use your API key with `X-Publisher-Key` for `GET /v1/publishers/me/stats` and `/
 | Role | URL |
 |------|-----|
 | Register | https://agentoll.net/register |
+| Setup | https://agentoll.net/setup |
 | API + script | https://agentoll-middleware-p5aon.ondigitalocean.app |
+| Health | https://agentoll-middleware-p5aon.ondigitalocean.app/health |

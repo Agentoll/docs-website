@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart — Script only — Agentoll</title>
+  <meta name="description" content="Register, paste one script tag, and go live. Default Agentoll setup for any website." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script" class="active">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script" class="active">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Quickstart — Script only</h1>
+    <p class="lead">The default path. Works on any site with a <code>&lt;head&gt;</code>. No npm, no DNS changes, no server required.</p>
+
+    <h2>Three steps</h2>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Go to <a href="https://agentoll.net/register">agentoll.net/register</a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Enter <strong>domain</strong>, <strong>Base wallet address</strong>, and optional email</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Copy the embed snippet into <code>&lt;head&gt;</code> on your site</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Production embed snippet</h2>
+    <p>Replace <code>pub_xxxxxxxx</code> with your publisher ID from registration.</p>
+    <pre><code>&lt;script
+  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
+  data-publisher-id="pub_xxxxxxxx"
+  async
+&gt;&lt;/script&gt;</code></pre>
+
+    <h2>Important notes</h2>
+    <ul>
+      <li><code>data-publisher-id</code> is <strong>required</strong> — you get it at registration.</li>
+      <li><code>data-api-base</code> is <strong>optional</strong> — defaults to the script URL origin. Use it for local dev (e.g. <code>http://localhost:8787</code>).</li>
+      <li>Your page <strong>Origin</strong> must match the registered domain (register <code>example.com</code>, serve from <code>https://example.com</code> or <code>https://www.example.com</code>).</li>
+      <li>The API key (<code>atk_...</code>) is issued at registration but <strong>not needed in HTML</strong> for script-only. Save it for the stats API later.</li>
+    </ul>
+
+    <h2>Verify it works</h2>
+    <ul>
+      <li>Open your site in Chrome — you should <strong>not</strong> see a payment wall.</li>
+      <li>Use a bot-like User-Agent or an automated fetch from another origin — you should see the classify / payment flow.</li>
+      <li>Check API health: <code>https://agentoll-middleware-p5aon.ondigitalocean.app/health</code></li>
+    </ul>
+
+    <div class="callout">
+      <strong>Need HTTP 402 for curl?</strong>
+      Script-only protects in the browser. To block unpaid curl and agents at the HTTP layer, add the optional <a href="/setup/server-gate">server gate</a>.
+    </div>
+
+    <div class="cta-bar">
+      <h2>Get your embed snippet</h2>
+      <p>Registration takes about a minute.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+      <a class="btn btn-secondary" href="/setup/embed">Embed reference</a>
+    </div>
+
+    <footer class="doc-footer">
+      <p><a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">Full API contract</a></p>
+    </footer>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

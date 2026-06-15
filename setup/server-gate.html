@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart — Server gate — Agentoll</title>
+  <meta name="description" content="Optional Node/Express middleware for HTTP 402 blocking with the agentoll npm package." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate" class="active">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate" class="active">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Quickstart — Server gate</h1>
+    <p class="lead"><strong>Optional — for sites with a Node server.</strong> Add the <code>agentoll</code> middleware to return HTTP 402 for curl and unpaid agents, in addition to the browser embed script.</p>
+
+    <h2>Steps</h2>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Register at <a href="https://agentoll.net/register">agentoll.net/register</a> — choose <strong>Script + server gate</strong> and <strong>save your API key</strong> (<code>atk_...</code>, shown once)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Add the <strong>same embed script</strong> to <code>&lt;head&gt;</code> (browser wallet UX for humans and paying agents)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>npm install agentoll</code></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Mount middleware <strong>before</strong> protected routes</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Express example</h2>
+    <pre><code>const express = require('express');
+const { createGate } = require('agentoll');
+
+const app = express();
+
+app.use(
+  createGate({
+    apiKey: process.env.AGENTOLL_API_KEY,
+    publicOrigin: 'https://www.example.com'
+  }).express()
+);
+
+app.get('/article', (req, res) => {
+  res.send('&lt;html&gt;...&lt;/html&gt;');
+});
+
+app.listen(3000);</code></pre>
+
+    <p><code>publicOrigin</code> is optional — set it to your registered public URL if it differs from the request host.</p>
+
+    <h2>Embed script (same as script-only)</h2>
+    <pre><code>&lt;script
+  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
+  data-publisher-id="pub_xxxxxxxx"
+  async
+&gt;&lt;/script&gt;</code></pre>
+
+    <h2>Verify with curl</h2>
+    <pre><code>curl -sI "https://www.example.com/article" -H "User-Agent: curl/8"</code></pre>
+    <p>Expect: <strong>HTTP 402</strong> with a <code>payment-required</code> header.</p>
+
+    <h2>Behavior</h2>
+    <table>
+      <thead>
+        <tr><th>Client</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Human browser</td><td>Page served normally</td></tr>
+        <tr><td>curl / bot (unpaid)</td><td><code>402</code> + <code>payment-required</code> header</td></tr>
+        <tr><td>Paid retry with <code>payment-signature</code></td><td><code>200</code> + session cookie</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>No DNS changes required.</strong> The server gate talks to the hosted API with your API key — no self-hosted middleware.</p>
+
+    <div class="callout">
+      <strong>Package docs</strong>
+      See <a href="https://www.npmjs.com/package/agentoll">agentoll on npm</a> and
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">SERVER_GATE.md</a> for options.
+    </div>
+
+    <div class="cta-bar">
+      <h2>Register and save your API key</h2>
+      <p>Select “Script + server gate” at registration for middleware instructions on the success screen.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+      <a class="btn btn-secondary" href="/setup/script">Script-only path</a>
+    </div>
+
+    <footer class="doc-footer">
+      <p><a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">Server gate docs</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/packages/agentoll/README.md">agentoll README</a></p>
+    </footer>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

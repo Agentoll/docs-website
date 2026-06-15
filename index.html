@@ -1275,8 +1275,8 @@
     <span style="font-weight:700;letter-spacing:0.2px;">Agentoll</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#install">Get started</a></li>
-    <li><a href="#embed">Embed</a></li>
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="/register">Register</a></li>
   </ul>
@@ -1286,11 +1286,11 @@
 <!-- HERO -->
 <div class="hero-split">
   <div class="hero-copy">
-    <h1>Turn AI crawler traffic into<br/><em>revenue in three steps</em></h1>
-    <p style="color:rgba(255,255,255,0.75);font-size:1.05rem;margin:0 0 20px;max-width:36em;">Register your domain, paste one script tag in <code>&lt;head&gt;</code>. Humans pass through free; bots pay a micro USDC toll on Base.</p>
+    <h1>Register → paste one script → <em>live</em></h1>
+    <p style="color:rgba(255,255,255,0.75);font-size:1.05rem;margin:0 0 20px;max-width:36em;">Hosted script-tag SaaS for bot detection and x402 USDC on Base. Humans pass free; automated clients pay a micro toll. Optional Node middleware for HTTP 402.</p>
     <div class="hero-actions" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
       <a class="btn btn-primary" href="/register" style="display:inline-block;padding:12px 22px;border-radius:10px;background:#fff;color:#000;font-weight:600;text-decoration:none;font-size:15px;">Register your site</a>
-      <a class="btn btn-secondary" href="#install" style="display:inline-block;padding:12px 22px;border-radius:10px;border:1px solid rgba(255,255,255,0.35);color:#fff;text-decoration:none;font-size:15px;">How it works</a>
+      <a class="btn btn-secondary" href="/setup" style="display:inline-block;padding:12px 22px;border-radius:10px;border:1px solid rgba(255,255,255,0.35);color:#fff;text-decoration:none;font-size:15px;">Setup guide</a>
     </div>
     <div class="install-strip">
       <div class="install-strip-label">embed</div>
@@ -1345,16 +1345,16 @@
 <!-- GET STARTED -->
 <section id="install">
   <div class="section-label">Get started</div>
-  <h2>Start collecting bot payments now</h2>
-  <p class="section-sub">Most publishers use the hosted script tag. No npm install, facilitator, or RPC keys on your side.</p>
+  <h2>Three steps — script only</h2>
+  <p class="section-sub">The default path. No npm, no DNS, no operator secrets. <a href="/setup/server-gate" style="color:var(--accent)">Server gate</a> is optional for Node sites.</p>
 
   <div class="about-block" style="margin-bottom:40px;max-width:720px;">
-    <h3 style="margin-bottom:16px;">Publisher quickstart</h3>
     <ol style="margin:0 0 0 1.2em;color:rgba(255,255,255,0.85);line-height:1.9;font-size:15px;">
       <li><strong>Register</strong> — <a href="/register" style="color:var(--accent)">agentoll.net/register</a>: domain + Base wallet (+ optional email).</li>
       <li><strong>Embed</strong> — paste the snippet into <code>&lt;head&gt;</code> (hostname must match registration).</li>
       <li><strong>Done</strong> — humans pass through; bots pay micro USDC via x402 on Base.</li>
     </ol>
+    <p style="margin-top:16px;font-size:14px;"><a href="/setup/script" style="color:var(--accent)">Full quickstart →</a></p>
     <div class="code-block" style="margin-top:20px;">
       <div class="code-header">
         <span class="code-filename">embed (production)</span>
@@ -1363,11 +1363,10 @@
       <pre id="embed-snippet-pre"><code>&lt;script
   src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
   data-publisher-id="pub_xxxxxxxx"
-  data-api-base="https://agentoll-middleware-p5aon.ondigitalocean.app"
   async
 &gt;&lt;/script&gt;</code></pre>
     </div>
-    <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:12px;">Save your <code>apiKey</code> at registration — shown once for <code>/v1/publishers/me/stats</code> and <code>/me/payments</code>.</p>
+    <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:12px;">API key (<code>atk_...</code>) is shown once at registration — save it for stats or server gate; not needed in HTML for script-only.</p>
   </div>
 
 </section>
@@ -1407,7 +1406,7 @@
       </tbody>
     </table>
   </div>
-  <p style="color:rgba(255,255,255,0.65);font-size:14px;margin-top:20px;max-width:720px;">Use <code>X-Publisher-Key</code> with your saved API key for publisher stats and payment history endpoints on the API.</p>
+  <p style="color:rgba(255,255,255,0.65);font-size:14px;margin-top:20px;max-width:720px;">Use <code>X-Publisher-Key</code> with your saved API key for publisher stats. See <a href="/setup/embed" style="color:var(--accent)">embed reference</a> and <a href="/setup/stats" style="color:var(--accent)">stats API</a>.</p>
 </section>
 
 <hr />
@@ -1416,11 +1415,17 @@
 <section id="about">
   <div class="section-label">About</div>
   <h2>What Agentoll is</h2>
-  <p class="about-lead"><strong>Agentoll</strong> charges automated traffic on your website — scripts, crawlers, and AI agents pay a micro-amount in USDC via <strong>x402 on Base</strong>. Human browsers pass through free. You register once and paste one script tag; we run settlement and sessions on the hosted API.</p>
+  <p class="about-lead"><strong>Agentoll</strong> charges automated traffic on your website — scripts, crawlers, and AI agents pay a micro-amount in USDC via <strong>x402 on Base</strong>. Human browsers pass through free. Register once and paste one script tag; settlement runs on the hosted API.</p>
+
+  <div class="about-block">
+    <h3>Two setup paths</h3>
+    <p><strong>Script only</strong> (default) — register, embed in <code>&lt;head&gt;</code>, done. In-browser bot wall.<br/>
+    <strong>Script + server gate</strong> (optional) — same script plus <code>npm install agentoll</code> on Node/Express for HTTP 402. <a href="/setup/server-gate" style="color:var(--accent)">Server gate guide →</a></p>
+  </div>
 
   <div class="about-block">
     <h3>How it works (script tag)</h3>
-    <p>Visitor loads your page → hosted <code>agent-toll.js</code> runs → <strong>humans</strong> exit with no payment → <strong>bots</strong> hit classify / payment wall → USDC on Base via x402 → session JWT for continued access. The platform runs facilitator and RPC; you only embed the tag.</p>
+    <p>Visitor loads your page → hosted script runs → <strong>humans</strong> pass with no payment → <strong>bots</strong> hit classify / payment wall → USDC on Base via x402 → session token for continued access. You only embed the tag.</p>
   </div>
 
   <div class="about-block">
@@ -1430,7 +1435,7 @@
 
   <div class="about-block">
     <h3>What you add</h3>
-    <p>Register at <a href="/register" style="color:var(--accent)">/register</a> and add the embed snippet to <code>&lt;head&gt;</code>. No facilitator keys, RPC URLs, or npm install.</p>
+    <p>Register at <a href="/register" style="color:var(--accent)">/register</a> and add the embed snippet to <code>&lt;head&gt;</code>. No DNS changes, npm install, or operator keys for script-only.</p>
   </div>
 
   <div class="about-block">
@@ -1448,7 +1453,7 @@
   <p>Register your domain, copy the embed snippet, and go live in minutes.</p>
   <div class="hero-actions" style="margin-bottom:0;justify-content:flex-start;">
     <a class="btn btn-primary" href="/register">Register your site</a>
-    <a class="btn btn-secondary" href="#embed">Embed reference</a>
+    <a class="btn btn-secondary" href="/setup">Setup guide</a>
   </div>
 </div>
 
@@ -1456,12 +1461,16 @@
 <footer>
   <p>
     <strong style="margin-right:8px;">Agentoll</strong>
+    <a href="/setup">Setup</a>
+    <span style="opacity:0.4;margin:0 6px;">·</span>
+    <a href="/setup/faq">FAQ</a>
+    <span style="opacity:0.4;margin:0 6px;">·</span>
     <a href="/register">Register</a>
   </p>
 </footer>
 
 <script>
-  const EMBED_SNIPPET = '<script\n  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"\n  data-publisher-id="pub_xxxxxxxx"\n  data-api-base="https://agentoll-middleware-p5aon.ondigitalocean.app"\n  async\n></script>';
+  const EMBED_SNIPPET = '<script\n  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"\n  data-publisher-id="pub_xxxxxxxx"\n  async\n></script>';
 
   function copyInstall(btn) {
     navigator.clipboard.writeText(EMBED_SNIPPET).then(() => {

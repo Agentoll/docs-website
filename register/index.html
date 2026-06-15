@@ -78,7 +78,7 @@
     }
 
     .wrap {
-      max-width: 480px;
+      max-width: 520px;
       margin: 0 auto;
       padding: 48px 20px 80px;
     }
@@ -111,7 +111,8 @@
       color: var(--muted);
     }
 
-    input {
+    input[type="text"],
+    input[type="email"] {
       width: 100%;
       padding: 10px 12px;
       margin-bottom: 18px;
@@ -133,6 +134,65 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin: -12px 0 18px;
+    }
+
+    .tier-fieldset {
+      border: none;
+      margin: 0 0 20px;
+      padding: 0;
+    }
+
+    .tier-fieldset > legend {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--muted);
+      padding: 0;
+    }
+
+    .tier-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tier-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .tier-option:has(input:checked) {
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .tier-option input {
+      margin-top: 3px;
+      accent-color: #ffffff;
+    }
+
+    .tier-option-body strong {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .tier-option-body span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .tier-option-body code {
+      font-family: var(--mono);
+      font-size: 0.7rem;
     }
 
     button[type="submit"] {
@@ -184,9 +244,13 @@
       color: var(--success);
     }
 
-    .success-panel p { color: var(--muted); font-size: 0.875rem; margin: 0 0 16px; }
+    .success-panel > p.intro {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin: 0 0 20px;
+    }
 
-    .field-block { margin-bottom: 16px; }
+    .field-block { margin-bottom: 20px; }
 
     .field-block label { margin-bottom: 4px; }
 
@@ -205,7 +269,7 @@
 
     textarea {
       width: 100%;
-      min-height: 88px;
+      min-height: 108px;
       padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -213,6 +277,7 @@
       color: var(--text);
       font-family: var(--mono);
       font-size: 0.75rem;
+      line-height: 1.45;
       resize: vertical;
     }
 
@@ -232,11 +297,61 @@
     .warn {
       font-size: 0.8125rem;
       color: #e6b84d;
-      margin-top: 12px;
+      margin-top: 0;
+      margin-bottom: 20px;
       padding: 10px 12px;
       background: rgba(230, 184, 77, 0.08);
       border-radius: 8px;
       border: 1px solid rgba(230, 184, 77, 0.25);
+    }
+
+    .gate-panel {
+      display: none;
+      margin-top: 8px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .gate-panel.visible { display: block; }
+
+    .gate-panel h3 {
+      font-size: 0.9375rem;
+      margin: 0 0 6px;
+    }
+
+    .gate-panel > p {
+      color: var(--muted);
+      font-size: 0.8125rem;
+      margin: 0 0 14px;
+    }
+
+    pre {
+      margin: 0 0 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .gate-panel a {
+      color: var(--accent);
+      font-size: 0.8125rem;
+    }
+
+    .stats-hint {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .stats-hint code {
+      font-family: var(--mono);
+      font-size: 0.75rem;
     }
 
     .page-footer {
@@ -258,8 +373,8 @@
 <nav>
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
-    <li><a href="/#install">Get started</a></li>
-    <li><a href="/#embed">Embed</a></li>
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
     <li><a href="/#about">About</a></li>
     <li><a href="/register" class="active">Register</a></li>
   </ul>
@@ -283,16 +398,36 @@
     <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
     <p class="hint">Support and account recovery only — not required for the script to work.</p>
 
+    <fieldset class="tier-fieldset">
+      <legend>Integration (optional)</legend>
+      <div class="tier-options">
+        <label class="tier-option">
+          <input type="radio" name="tier" value="script" checked />
+          <span class="tier-option-body">
+            <strong>Script only</strong>
+            <span>Paste the embed snippet in your site’s <code>&lt;head&gt;</code>.</span>
+          </span>
+        </label>
+        <label class="tier-option">
+          <input type="radio" name="tier" value="gate" />
+          <span class="tier-option-body">
+            <strong>Script + server gate</strong>
+            <span>Same registration — we’ll show Node/Express middleware steps after signup.</span>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
     <button type="submit" id="submit-btn">Create account</button>
     <div id="form-error" class="error" role="alert"></div>
   </form>
 
   <div id="success-panel" class="success-panel" aria-live="polite">
     <h2>You're registered</h2>
-    <p>Save your API key now — it won't be shown again.</p>
+    <p class="intro">Copy your credentials below. Paste the embed snippet into <code style="font-family:var(--mono)">&lt;head&gt;</code> on your domain.</p>
 
     <div class="field-block">
-      <label>Publisher ID</label>
+      <label for="out-publisher-id">Publisher ID</label>
       <div class="copy-row">
         <input id="out-publisher-id" readonly />
         <button type="button" class="copy-btn" data-copy="out-publisher-id">Copy</button>
@@ -300,7 +435,8 @@
     </div>
 
     <div class="field-block">
-      <label>API key (dashboard)</label>
+      <label for="out-api-key">API key</label>
+      <p class="warn" style="margin-bottom:10px;">Shown once — copy and store it now. You cannot retrieve it again.</p>
       <div class="copy-row">
         <input id="out-api-key" readonly />
         <button type="button" class="copy-btn" data-copy="out-api-key">Copy</button>
@@ -308,16 +444,26 @@
     </div>
 
     <div class="field-block">
-      <label>Embed snippet</label>
-      <textarea id="out-snippet" readonly></textarea>
+      <label for="out-snippet">Embed snippet</label>
+      <textarea id="out-snippet" readonly spellcheck="false"></textarea>
       <button type="button" class="copy-btn" style="margin-top:8px;width:100%" data-copy="out-snippet">Copy snippet</button>
     </div>
 
-    <p class="warn">Store your API key securely. Use it with <code style="font-family:var(--mono)">X-Publisher-Key</code> for stats at <code style="font-family:var(--mono)">/v1/publishers/me/*</code>.</p>
+    <div id="gate-panel" class="gate-panel">
+      <h3>Server gate (Node / Express)</h3>
+      <p>Install the <code style="font-family:var(--mono)">agentoll</code> package and mount the gate with your API key:</p>
+      <pre id="gate-install">npm install agentoll</pre>
+      <button type="button" class="copy-btn" style="margin-bottom:14px;width:100%" data-copy-text="npm install agentoll">Copy install command</button>
+      <pre id="gate-code"></pre>
+      <button type="button" class="copy-btn" style="margin-bottom:14px;width:100%" id="gate-copy-code">Copy middleware</button>
+      <p><a href="/setup/server-gate">Server gate setup guide →</a> · <a href="https://www.npmjs.com/package/agentoll" target="_blank" rel="noopener noreferrer">agentoll on npm</a></p>
+    </div>
+
+    <p class="stats-hint">Use <code>X-Publisher-Key</code> with your API key for stats at <code>/v1/publishers/me/*</code>.</p>
   </div>
 
   <footer class="page-footer">
-    Payments and x402 settlement are handled by Agent Toll — no facilitator setup on your side.
+    Payments and x402 settlement run on the hosted API — no DNS, npm, or operator setup for script-only.
     <br /><a href="/">← Back to docs</a>
   </footer>
 </div>
@@ -335,7 +481,28 @@
     const form = document.getElementById('register-form');
     const errEl = document.getElementById('form-error');
     const successEl = document.getElementById('success-panel');
+    const gatePanel = document.getElementById('gate-panel');
     const submitBtn = document.getElementById('submit-btn');
+    const gateCodeEl = document.getElementById('gate-code');
+    let gateMiddlewareSource = '';
+
+    const ERROR_MESSAGES = {
+      wallet_and_domain_required: 'Domain and wallet are required.',
+      invalid_wallet: 'Enter a valid Base wallet address.',
+      invalid_domain: 'Enter a valid domain.',
+      domain_already_registered: 'This domain is already registered.',
+      registration_unavailable: 'Registration is temporarily unavailable — try again.'
+    };
+
+    function registrationErrorMessage(data, status) {
+      if (status === 503) {
+        return ERROR_MESSAGES.registration_unavailable;
+      }
+      if (data.errorReason && ERROR_MESSAGES[data.errorReason]) {
+        return ERROR_MESSAGES[data.errorReason];
+      }
+      return data.error || 'Registration failed (' + status + ').';
+    }
 
     function normalizeDomain(raw) {
       let v = raw.trim().toLowerCase();
@@ -347,6 +514,29 @@
       return v.replace(/^www\./, '');
     }
 
+    function selectedTier() {
+      const checked = form.querySelector('input[name="tier"]:checked');
+      return checked ? checked.value : 'script';
+    }
+
+    function buildEmbedSnippet(publisherId) {
+      const src = apiBase.replace(/\/$/, '') + '/v1/agent-toll.js';
+      return (
+        '<script\n' +
+        '  src="' + src + '"\n' +
+        '  data-publisher-id="' + publisherId + '"\n' +
+        '  async\n' +
+        '></script>'
+      );
+    }
+
+    function buildGateMiddleware(apiKey) {
+      return (
+        "const { createGate } = require('agentoll');\n" +
+        "app.use(createGate({ apiKey: '" + apiKey + "' }).express());"
+      );
+    }
+
     function showError(msg) {
       errEl.textContent = msg;
       errEl.classList.add('visible');
@@ -356,16 +546,30 @@
       errEl.classList.remove('visible');
     }
 
+    function copyText(text, btn, defaultLabel) {
+      navigator.clipboard.writeText(text).then(function () {
+        const prev = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function () { btn.textContent = defaultLabel || prev; }, 1500);
+      });
+    }
+
     document.querySelectorAll('[data-copy]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         const id = btn.getAttribute('data-copy');
         const el = document.getElementById(id);
-        const text = el.value || el.textContent;
-        navigator.clipboard.writeText(text).then(function () {
-          btn.textContent = 'Copied';
-          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
-        });
+        copyText(el.value || el.textContent, btn, 'Copy');
       });
+    });
+
+    document.querySelectorAll('[data-copy-text]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        copyText(btn.getAttribute('data-copy-text'), btn, btn.textContent);
+      });
+    });
+
+    document.getElementById('gate-copy-code').addEventListener('click', function () {
+      copyText(gateMiddlewareSource, this, 'Copy middleware');
     });
 
     form.addEventListener('submit', async function (e) {
@@ -377,8 +581,9 @@
       const domain = normalizeDomain(document.getElementById('domain').value);
       const walletAddress = document.getElementById('walletAddress').value.trim();
       const emailRaw = document.getElementById('email').value.trim();
+      const tier = selectedTier();
 
-      const body = { domain, walletAddress };
+      const body = { walletAddress, domain };
       if (emailRaw) body.email = emailRaw;
 
       try {
@@ -390,21 +595,24 @@
         const data = await res.json().catch(function () { return {}; });
 
         if (!res.ok) {
-          showError(data.errorReason || data.error || 'Registration failed (' + res.status + ')');
+          showError(registrationErrorMessage(data, res.status));
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create account';
           return;
         }
 
-        const apiForEmbed = apiBase.replace(/\/$/, '');
-        const scriptSrc = apiForEmbed + '/v1/agent-toll.js';
-        const snippet =
-          '<script src="' + scriptSrc + '" data-publisher-id="' + data.publisherId +
-          '" data-api-base="' + apiForEmbed + '" async><\/script>';
-
         document.getElementById('out-publisher-id').value = data.publisherId;
         document.getElementById('out-api-key').value = data.apiKey;
-        document.getElementById('out-snippet').value = snippet;
+        document.getElementById('out-snippet').value = buildEmbedSnippet(data.publisherId);
+
+        gateMiddlewareSource = buildGateMiddleware(data.apiKey);
+        gateCodeEl.textContent = gateMiddlewareSource;
+
+        if (tier === 'gate') {
+          gatePanel.classList.add('visible');
+        } else {
+          gatePanel.classList.remove('visible');
+        }
 
         form.style.display = 'none';
         successEl.classList.add('visible');

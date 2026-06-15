@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ — Agentoll</title>
+  <meta name="description" content="Common questions about Agentoll script-tag setup, payments, and server gate." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq" class="active">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq" class="active">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>FAQ</h1>
+    <p class="lead">Answers for publishers setting up Agentoll for the first time.</p>
+
+    <h2>Do humans pay?</h2>
+    <p>No. Real browsers pass through free with no payment wall.</p>
+
+    <h2>How much do bots pay?</h2>
+    <p>About <strong>0.000002 USDC</strong> per access on Base (configurable by the platform).</p>
+
+    <h2>Do I need a wallet to set up?</h2>
+    <p>You register <strong>your</strong> wallet for revenue attribution. Visitors’ agents pay from their own wallets when they hit the toll.</p>
+
+    <h2>Do I need npm?</h2>
+    <p>Only if you want HTTP 402 on server routes — install the <code>agentoll</code> package. Script-only needs no npm.</p>
+
+    <h2>Do I need DNS changes?</h2>
+    <p>No. Paste the script tag on your existing site — no DNS records to add or change.</p>
+
+    <h2>What is the API key for?</h2>
+    <p>Server gate middleware (<code>X-Publisher-Key</code> / <code>apiKey</code> option) and optional stats API (<code>/v1/publishers/me/stats</code>). Not required in HTML for script-only.</p>
+
+    <h2>Script only vs server gate?</h2>
+    <p><strong>Script only</strong> = in-browser detection and payment wall. <strong>Server gate</strong> = same script plus Node middleware that also blocks curl and agents at HTTP 402.</p>
+
+    <h2>What happened to the agent-toll npm package?</h2>
+    <p>v3 removed self-hosted middleware for publishers. Use the hosted script tag plus optional <code>agentoll</code> for server gate.</p>
+
+    <h2>Where does USDC go?</h2>
+    <p>On-chain to the platform operator wallet. Your registered wallet is used for revenue share and attribution.</p>
+
+    <h2>Is this x402?</h2>
+    <p>Yes. v2 headers: <code>payment-required</code>, <code>payment-signature</code>, <code>payment-response</code>.</p>
+
+    <div class="cta-bar">
+      <h2>Still have questions?</h2>
+      <p>Start with the script quickstart — most publishers are live in three steps.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+      <a class="btn btn-secondary" href="/setup/troubleshooting">Troubleshooting</a>
+    </div>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

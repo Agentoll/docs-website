@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embed reference — Agentoll</title>
+  <meta name="description" content="Script tag attributes and framework examples for Agentoll embed." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed" class="active">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Embed reference</h1>
+    <p class="lead">Production script URL and attributes for the hosted Agentoll embed.</p>
+
+    <h2>Script tag attributes</h2>
+    <table>
+      <thead>
+        <tr><th>Attribute</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src</code></td>
+          <td>Yes</td>
+          <td><code>https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js</code></td>
+        </tr>
+        <tr>
+          <td><code>data-publisher-id</code></td>
+          <td>Yes</td>
+          <td><code>pub_...</code> from registration</td>
+        </tr>
+        <tr>
+          <td><code>data-api-base</code></td>
+          <td>No</td>
+          <td>API origin (default: script URL origin). Use for local dev: <code>http://localhost:8787</code></td>
+        </tr>
+        <tr>
+          <td><code>async</code></td>
+          <td>Recommended</td>
+          <td>Non-blocking load</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Production snippet</h2>
+    <pre><code>&lt;script
+  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
+  data-publisher-id="pub_xxxxxxxx"
+  async
+&gt;&lt;/script&gt;</code></pre>
+
+    <h2>Plain HTML</h2>
+    <p>Paste the snippet inside <code>&lt;head&gt;</code> on every page you want protected (or in a shared layout template).</p>
+
+    <h2>Next.js (App Router)</h2>
+    <p>In <code>app/layout.tsx</code>:</p>
+    <pre><code>import Script from 'next/script';
+
+export default function RootLayout({ children }) {
+  return (
+    &lt;html lang="en"&gt;
+      &lt;head&gt;
+        &lt;Script
+          src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
+          data-publisher-id="pub_xxxxxxxx"
+          strategy="afterInteractive"
+        /&gt;
+      &lt;/head&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</code></pre>
+
+    <h2>Next.js (Pages Router)</h2>
+    <p>In <code>pages/_document.tsx</code>, add the script inside <code>&lt;Head&gt;</code> with <code>async</code>.</p>
+
+    <h2>WordPress / Webflow / Squarespace</h2>
+    <ul>
+      <li><strong>WordPress</strong> — use a header/footer injection plugin or your theme’s <code>header.php</code> / “Additional CSS &amp; scripts” setting.</li>
+      <li><strong>Webflow</strong> — Project Settings → Custom Code → Head Code.</li>
+      <li><strong>Squarespace</strong> — Settings → Advanced → Code Injection → Header.</li>
+    </ul>
+    <p>Each platform’s docs call this “custom code”, “header injection”, or “site-wide header” — paste the same snippet there.</p>
+
+    <div class="cta-bar">
+      <h2>Get your publisher ID</h2>
+      <p>Register to receive your personalized embed snippet.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+    </div>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

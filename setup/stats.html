@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stats API — Agentoll</title>
+  <meta name="description" content="Optional publisher stats API using your API key from registration." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
+    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/register">Register</a></li>
+  </ul>
+  <a class="nav-badge" href="/register">Get started</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats" class="active">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Stats API</h1>
+    <p class="lead">Optional / advanced. Use your API key from registration (<code>atk_...</code>, shown once) to read detections, payments, and revenue.</p>
+
+    <h2>Authentication</h2>
+    <p>Send your API key in the <code>X-Publisher-Key</code> header on every request.</p>
+
+    <h2>Stats</h2>
+    <pre><code>curl -s https://agentoll-middleware-p5aon.ondigitalocean.app/v1/publishers/me/stats \
+  -H "X-Publisher-Key: atk_..."</code></pre>
+    <p>Returns detections, payments, conversion rate, and revenue aggregates.</p>
+
+    <h2>Payment history</h2>
+    <pre><code>curl -s https://agentoll-middleware-p5aon.ondigitalocean.app/v1/publishers/me/payments \
+  -H "X-Publisher-Key: atk_..."</code></pre>
+
+    <h2>Base URL</h2>
+    <p><code>https://agentoll-middleware-p5aon.ondigitalocean.app</code></p>
+
+    <p>The API key is also used by <code>agentoll</code> server gate middleware — store it in an environment variable such as <code>AGENTOLL_API_KEY</code>, not in client-side HTML.</p>
+
+    <div class="callout">
+      <strong>Full contract</strong>
+      Request/response shapes: <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">E2E_SEPOLIA_SPEC.md</a>
+    </div>
+
+    <div class="cta-bar">
+      <h2>Don’t have your API key?</h2>
+      <p>It is shown once at registration. Register a new domain only if you lost the key and cannot recover the account.</p>
+      <a class="btn btn-primary" href="/register">Register your site</a>
+    </div>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
