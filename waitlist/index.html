@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Join the waitlist — Agentoll</title>
   <meta name="description" content="Join the Agentoll waitlist for bot detection and x402 USDC micropayments." />
-  <meta name="agent-toll-api-base" content="https://agentoll-middleware-p5aon.ondigitalocean.app" />
+  <meta name="agentoll-api-base" content="https://agentoll-middleware-p5aon.ondigitalocean.app" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -62,7 +62,7 @@
       font-size: 14px;
     }
 
-    .nav-links a:hover { opacity: 0.85; }
+    .nav-links a:hover { color: var(--text); }
 
     .nav-links a.active { text-decoration: underline; text-underline-offset: 4px; }
 
@@ -208,8 +208,7 @@
 <nav>
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
-    <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script">Browser embed</a></li>
+    <li><a href="/setup">Docs</a></li>
     <li><a href="/#about">About</a></li>
     <li><a href="/waitlist" class="active">Waitlist</a></li>
   </ul>
@@ -242,7 +241,7 @@
 <script>
   (function () {
     const params = new URLSearchParams(window.location.search);
-    const metaApi = document.querySelector('meta[name="agent-toll-api-base"]');
+    const metaApi = document.querySelector('meta[name="agentoll-api-base"]');
     let apiBase = (params.get('api') || metaApi?.content || '').replace(/\/$/, '');
     if (!apiBase && window.location.port === '8787') {
       apiBase = window.location.origin;

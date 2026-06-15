@@ -1,5 +1,5 @@
 {
-  "name": "agent-toll-docs",
+  "name": "agentoll-docs",
   "private": true,
   "scripts": {
     "dev": "serve ."

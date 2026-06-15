@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Setup — What is Agent-Toll? — Agentoll</title>
+  <title>Setup — What is Agentoll? — Agentoll</title>
   <meta name="description" content="Bot detection and x402 USDC on Base. Browser embed plus server gate — two layers of protection." />
   <link rel="stylesheet" href="/assets/docs.css" />
 </head>
@@ -12,10 +12,8 @@
 <nav>
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
-    <li><a href="/setup" class="active">Setup</a></li>
-    <li><a href="/setup/script">Browser embed</a></li>
-    <li><a href="/setup/server-gate">Server gate</a></li>
-    <li><a href="/setup/faq">FAQ</a></li>
+    <li><a href="/setup" class="active">Docs</a></li>
+    <li><a href="/#about">About</a></li>
     <li><a href="/waitlist">Waitlist</a></li>
   </ul>
   <a class="nav-badge" href="/waitlist">Join waitlist</a>
@@ -26,8 +24,7 @@
     <div class="sidebar-title">Setup</div>
     <ul>
       <li><a href="/setup" class="active">Overview</a></li>
-      <li><a href="/setup/script">Browser embed</a></li>
-      <li><a href="/setup/server-gate">Server gate</a></li>
+      <li><a href="/setup/integration">Integration</a></li>
       <li><a href="/setup/embed">Embed reference</a></li>
       <li><a href="/setup/faq">FAQ</a></li>
       <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
@@ -36,8 +33,8 @@
   </aside>
 
   <article class="doc">
-    <h1>What is Agent-Toll?</h1>
-    <p class="lead">Bot detection plus x402 USDC micropayments on Base. Humans pass through free; automated clients pay a micro toll (~0.000002 USDC) to continue.</p>
+    <h1>What is Agentoll?</h1>
+    <p class="lead">Bot detection plus x402 USDC micropayments on Base. Humans pass through free; automated clients pay your configured toll to continue.</p>
 
     <p><strong>Agentoll</strong> protects your site in <strong>two layers</strong>: a browser embed script and a Node server gate. Together they cover human browsers, in-page bots, curl, and API clients — with no DNS changes or operator secrets on your side.</p>
 
@@ -64,15 +61,10 @@
 
     <h2>Two layers — both part of the product</h2>
     <div class="path-cards">
-      <a class="path-card" href="/setup/script">
-        <span class="tag">Layer 1</span>
-        <h3>Browser embed</h3>
-        <p>Hosted script in <code>&lt;head&gt;</code>. Human detection, payment wall, session tokens in the browser.</p>
-      </a>
-      <a class="path-card" href="/setup/server-gate">
-        <span class="tag">Layer 2</span>
-        <h3>Server gate</h3>
-        <p><code>npm install agentoll</code> on Node/Express. HTTP 402 for curl and unpaid agents at the server.</p>
+      <a class="path-card" href="/setup/integration">
+        <span class="tag">Setup</span>
+        <h3>Browser embed &amp; server gate</h3>
+        <p>Hosted script in <code>&lt;head&gt;</code> plus <code>npm install agentoll</code> on Node/Express for full protection.</p>
       </a>
     </div>
 
@@ -102,15 +94,13 @@
     <div class="callout">
       <strong>Production URLs</strong>
       Join the <a href="https://agentoll.net/waitlist">waitlist</a> at agentoll.net/waitlist.
-      Script host: <code>https://agentoll-middleware-p5aon.ondigitalocean.app</code>.
     </div>
 
     <div class="cta-bar">
       <h2>Ready to go live?</h2>
       <p>Register, add the browser embed, and mount the server gate on your Node app.</p>
       <a class="btn btn-primary" href="/waitlist">Join waitlist</a>
-      <a class="btn btn-secondary" href="/setup/script">Browser embed</a>
-      <a class="btn btn-secondary" href="/setup/server-gate">Server gate</a>
+      <a class="btn btn-secondary" href="/setup/integration">Integration guide</a>
     </div>
 
     <footer class="doc-footer">

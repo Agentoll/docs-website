@@ -21,5 +21,5 @@ Publisher setup: hosted browser embed + `agentoll` server gate.
 
 ## GitHub repositories
 
-- `agent-toll`: https://github.com/agent-toll/agent-toll
-- `agent-toll-docs`: this repo
+- `agentoll`: https://github.com/agent-toll/agent-toll
+- `agentoll-docs`: this repo

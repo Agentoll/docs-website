@@ -46,7 +46,7 @@ const { createGate } = require('agentoll');
 app.use(createGate({ apiKey: 'atk_...' }).express());
 ```
 
-Link: [setup/server-gate](setup/server-gate.html) · [agentoll on npm](https://www.npmjs.com/package/agentoll)
+Link: [setup/integration](setup/integration.html) · [agentoll on npm](https://www.npmjs.com/package/agentoll)
 
 ## Registration errors
 

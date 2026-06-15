@@ -7,8 +7,7 @@ Documentation for **Agentoll** v3 — browser embed + `agentoll` server gate.
 | Doc | Purpose |
 |-----|---------|
 | **[agentoll.net/setup](https://agentoll.net/setup)** | Overview — two layers of protection |
-| **[agentoll.net/setup/script](https://agentoll.net/setup/script)** | Layer 1: browser embed |
-| **[agentoll.net/setup/server-gate](https://agentoll.net/setup/server-gate)** | Layer 2: HTTP 402 middleware |
+| **[agentoll.net/setup/integration](https://agentoll.net/setup/integration)** | Browser embed + server gate |
 | **[agentoll.net/register](https://agentoll.net/register)** | Register domain + wallet |
 | **[setup/faq.html](setup/faq.html)** | FAQ |
 | **[setup/troubleshooting.html](setup/troubleshooting.html)** | Troubleshooting |
@@ -36,7 +35,7 @@ Base URL: https://agentoll-middleware-p5aon.ondigitalocean.app
 
 ## API contract
 
-See the [agent-toll E2E spec](https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md).
+See the [Agentoll E2E spec](https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md).
 
 ## Operator deployment
 

@@ -2,13 +2,14 @@
   "cleanUrls": true,
   "redirects": [
     { "source": "/get-started", "destination": "/waitlist", "permanent": false },
-    { "source": "/register", "destination": "/waitlist", "permanent": false }
+    { "source": "/register", "destination": "/waitlist", "permanent": false },
+    { "source": "/setup/script", "destination": "/setup/integration#browser-embed", "permanent": true },
+    { "source": "/setup/server-gate", "destination": "/setup/integration#server-gate", "permanent": true }
   ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/setup", "destination": "/setup/index.html" },
-    { "source": "/setup/script", "destination": "/setup/script.html" },
-    { "source": "/setup/server-gate", "destination": "/setup/server-gate.html" },
+    { "source": "/setup/integration", "destination": "/setup/integration.html" },
     { "source": "/setup/embed", "destination": "/setup/embed.html" },
     { "source": "/setup/faq", "destination": "/setup/faq.html" },
     { "source": "/setup/troubleshooting", "destination": "/setup/troubleshooting.html" },

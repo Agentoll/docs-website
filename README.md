@@ -1,4 +1,4 @@
-# agent-toll-docs
+# agentoll-docs
 
 Marketing site and publisher documentation for **Agentoll** — [https://agentoll.net](https://agentoll.net).
 
@@ -7,8 +7,7 @@ Marketing site and publisher documentation for **Agentoll** — [https://agentol
 | Doc | Purpose |
 |-----|---------|
 | [setup/index.html](setup/index.html) | Setup overview — `/setup` |
-| [setup/script.html](setup/script.html) | Layer 1: browser embed |
-| [setup/server-gate.html](setup/server-gate.html) | Layer 2: `agentoll` server gate |
+| [setup/integration.html](setup/integration.html) | Browser embed + server gate — `/setup/integration` |
 | [setup/embed.html](setup/embed.html) | Embed attributes + framework examples |
 | [setup/faq.html](setup/faq.html) | FAQ |
 | [setup/troubleshooting.html](setup/troubleshooting.html) | Troubleshooting |
@@ -22,7 +21,7 @@ Marketing site and publisher documentation for **Agentoll** — [https://agentol
 | Role | URL |
 |------|-----|
 | API + script CDN | https://agentoll-middleware-p5aon.ondigitalocean.app |
-| API repo | [agent-toll](https://github.com/agent-toll/agent-toll) |
+| API repo | [agentoll](https://github.com/agent-toll/agent-toll) |
 
 ## Local preview
 

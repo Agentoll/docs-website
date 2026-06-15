@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Integration — Browser embed &amp; server gate — Agentoll</title>
+  <meta name="description" content="Add Agentoll in two layers: hosted browser embed for human detection and agentoll Node middleware for HTTP 402." />
+  <link rel="stylesheet" href="/assets/docs.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup" class="active">Docs</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/waitlist">Waitlist</a></li>
+  </ul>
+  <a class="nav-badge" href="/waitlist">Join waitlist</a>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Setup</div>
+    <ul>
+      <li><a href="/setup">Overview</a></li>
+      <li><a href="/setup/integration" class="active">Integration</a></li>
+      <li><a href="/setup/embed">Embed reference</a></li>
+      <li><a href="/setup/faq">FAQ</a></li>
+      <li><a href="/setup/troubleshooting">Troubleshooting</a></li>
+      <li><a href="/setup/stats">Stats API</a></li>
+    </ul>
+  </aside>
+
+  <article class="doc">
+    <h1>Integration guide</h1>
+    <p class="lead">Two layers: a hosted script in <code>&lt;head&gt;</code> for human detection and in-browser payments, plus <code>agentoll</code> middleware on Node/Express for HTTP 402 on curl and agents.</p>
+
+    <h2>Steps</h2>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Join the <a href="https://agentoll.net/waitlist">waitlist</a> at agentoll.net/waitlist</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Enter <strong>domain</strong>, <strong>Base wallet address</strong>, and optional email — <strong>save your API key</strong></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Copy the embed snippet into <code>&lt;head&gt;</code> on your site</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>If you run Node/Express, <code>npm install agentoll</code> and mount middleware before routes</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="browser-embed">Browser embed — Layer 1</h2>
+    <p>The hosted script tag detects humans, classifies bots, and runs the payment wall with wallet UX in the browser.</p>
+
+    <p>Replace <code>pub_xxxxxxxx</code> with your publisher ID from registration.</p>
+    <pre><code>&lt;script
+  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
+  data-publisher-id="pub_xxxxxxxx"
+  async
+&gt;&lt;/script&gt;</code></pre>
+
+    <h3>Important notes</h3>
+    <ul>
+      <li><code>data-publisher-id</code> is <strong>required</strong> — you get it at registration.</li>
+      <li><code>data-api-base</code> is optional — defaults to the script URL origin. Use for local dev (e.g. <code>http://localhost:8787</code>).</li>
+      <li>Your page <strong>Origin</strong> must match the registered domain.</li>
+      <li>The API key (<code>atk_...</code>) is not placed in HTML — save it for the server gate and <a href="/setup/stats">stats API</a>.</li>
+    </ul>
+
+    <h3>Verify the embed</h3>
+    <ul>
+      <li>Open your site in Chrome — no payment wall for humans.</li>
+      <li>Bot-like User-Agent or automated fetch — classify / payment flow triggers.</li>
+      <li>API health: <code>https://agentoll-middleware-p5aon.ondigitalocean.app/health</code></li>
+    </ul>
+
+    <div class="callout">
+      <strong>Layer 2 — server gate</strong>
+      The embed does not block curl at the HTTP layer. Mount <code>agentoll</code> on your Node server for HTTP 402 — see below.
+    </div>
+
+    <h2 id="server-gate">Server gate — Layer 2</h2>
+    <p>Node/Express middleware via the <code>agentoll</code> package. Returns HTTP 402 for curl and unpaid agents. Always pair with the browser embed — humans and paying agents need the in-browser wallet UX.</p>
+
+    <h3>Express example</h3>
+    <pre><code>const express = require('express');
+const { createGate } = require('agentoll');
+
+const app = express();
+
+app.use(
+  createGate({
+    apiKey: process.env.AGENTOLL_API_KEY,
+    publicOrigin: 'https://www.example.com'
+  }).express()
+);
+
+app.get('/article', (req, res) => {
+  res.send('&lt;html&gt;...&lt;/html&gt;');
+});
+
+app.listen(3000);</code></pre>
+
+    <p><code>publicOrigin</code> can be set to your registered public URL if it differs from the request host.</p>
+
+    <h3>Verify with curl</h3>
+    <pre><code>curl -sI "https://www.example.com/article" -H "User-Agent: curl/8"</code></pre>
+    <p>Expect: <strong>HTTP 402</strong> with a <code>payment-required</code> header.</p>
+
+    <h3>Behavior</h3>
+    <table>
+      <thead>
+        <tr><th>Client</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Human browser</td><td>Page served normally</td></tr>
+        <tr><td>curl / bot (unpaid)</td><td><code>402</code> + <code>payment-required</code> header</td></tr>
+        <tr><td>Paid retry with <code>payment-signature</code></td><td><code>200</code> + session cookie</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>No DNS changes required.</strong> The server gate uses your API key with the hosted API — no self-hosted middleware.</p>
+
+    <div class="callout">
+      <strong>Package docs</strong>
+      <a href="https://www.npmjs.com/package/agentoll">agentoll on npm</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">SERVER_GATE.md</a>
+    </div>
+
+    <div class="cta-bar">
+      <h2>Get your embed snippet and API key</h2>
+      <p>Registration includes both the browser embed and server gate instructions.</p>
+      <a class="btn btn-primary" href="/waitlist">Join waitlist</a>
+      <a class="btn btn-secondary" href="/setup/embed">Embed reference</a>
+    </div>
+
+    <footer class="doc-footer">
+      <p><a href="/setup/embed">Embed reference</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">Server gate docs</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">API contract</a></p>
+    </footer>
+  </article>
+</div>
+
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

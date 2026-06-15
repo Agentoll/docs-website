@@ -8,7 +8,7 @@ v3 is **browser embed + server gate** on the hosted API. No self-hosted middlewa
 2. **Browser embed** — paste script into `<head>`.
 3. **Server gate** — `npm install agentoll` and mount middleware before routes.
 
-Guides: [setup/script.html](setup/script.html) · [setup/server-gate.html](setup/server-gate.html)
+Guides: [setup/integration.html](setup/integration.html)
 
 ## Static / hosted HTML
 
@@ -29,4 +29,4 @@ curl -H "X-Publisher-Key: atk_..." \
 
 ## Operator deployment
 
-See [server/README.md](https://github.com/agent-toll/agent-toll/blob/main/server/README.md) in the agent-toll repo.
+See [server/README.md](https://github.com/agent-toll/agent-toll/blob/main/server/README.md) in the Agentoll repo.

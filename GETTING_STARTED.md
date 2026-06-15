@@ -40,7 +40,7 @@ const { createGate } = require('agentoll');
 app.use(createGate({ apiKey: process.env.AGENTOLL_API_KEY }).express());
 ```
 
-HTTP 402 for curl and unpaid agents. See [setup/server-gate.html](setup/server-gate.html).
+HTTP 402 for curl and unpaid agents. See [setup/integration.html](setup/integration.html).
 
 ---
 
