@@ -1,7 +1,8 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/get-started", "destination": "/register", "permanent": true }
+    { "source": "/get-started", "destination": "/waitlist", "permanent": false },
+    { "source": "/register", "destination": "/waitlist", "permanent": false }
   ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },

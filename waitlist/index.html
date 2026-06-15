@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join the waitlist — Agentoll</title>
+  <meta name="description" content="Join the Agentoll waitlist for bot detection and x402 USDC micropayments." />
+  <meta name="agent-toll-api-base" content="https://agentoll-middleware-p5aon.ondigitalocean.app" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000000;
+      --surface: #1e1e1e;
+      --surface2: #141414;
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.65);
+      --accent: #ffffff;
+      --success: #3dd68c;
+      --error: #ff6b6b;
+      --radius: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #000000;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .nav-logo {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover { opacity: 0.85; }
+
+    .nav-links a.active { text-decoration: underline; text-underline-offset: 4px; }
+
+    .nav-badge {
+      background: #ffffff;
+      color: #000000;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      text-decoration: none;
+    }
+
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+      line-height: 1.15;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0 0 32px;
+      font-size: 0.95rem;
+    }
+
+    form {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.9375rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.45);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: -12px 0 18px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #000000;
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover { opacity: 0.92; }
+
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .error {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.35);
+      color: var(--error);
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .error.visible { display: block; }
+
+    .success-panel {
+      display: none;
+      margin-top: 24px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .success-panel.visible { display: block; }
+
+    .success-panel h2 {
+      font-size: 1.125rem;
+      margin: 0 0 8px;
+      color: var(--success);
+    }
+
+    .success-panel p {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .page-footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .page-footer a { color: var(--muted); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Agentoll</a>
+  <ul class="nav-links">
+    <li><a href="/setup">Setup</a></li>
+    <li><a href="/setup/script">Browser embed</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/waitlist" class="active">Waitlist</a></li>
+  </ul>
+  <a class="nav-badge" href="/waitlist">Join waitlist</a>
+</nav>
+
+<div class="wrap">
+  <h1>Join the waitlist</h1>
+  <p class="lead">Agentoll protects your site from bots with in-browser detection and x402 USDC micropayments. We're onboarding publishers in waves — leave your email and we'll invite you to register.</p>
+
+  <form id="waitlist-form" novalidate>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" />
+    <p class="hint">We'll email you when your spot opens up.</p>
+
+    <button type="submit" id="submit-btn">Join waitlist</button>
+    <div id="form-error" class="error" role="alert"></div>
+  </form>
+
+  <div id="success-panel" class="success-panel" aria-live="polite">
+    <h2>You're on the list</h2>
+    <p id="success-message">We'll email you when registration opens for your account.</p>
+  </div>
+
+  <footer class="page-footer">
+    <a href="/">← Back to docs</a>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    const metaApi = document.querySelector('meta[name="agent-toll-api-base"]');
+    let apiBase = (params.get('api') || metaApi?.content || '').replace(/\/$/, '');
+    if (!apiBase && window.location.port === '8787') {
+      apiBase = window.location.origin;
+    }
+    if (!apiBase) apiBase = 'http://localhost:8787';
+
+    const form = document.getElementById('waitlist-form');
+    const errEl = document.getElementById('form-error');
+    const successEl = document.getElementById('success-panel');
+    const successMessage = document.getElementById('success-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    const ERROR_MESSAGES = {
+      email_required: 'Email is required.',
+      invalid_email: 'Enter a valid email address.',
+      waitlist_unavailable: 'Waitlist is temporarily unavailable — try again shortly.'
+    };
+
+    function waitlistErrorMessage(data, status) {
+      if (status === 503) {
+        return ERROR_MESSAGES.waitlist_unavailable;
+      }
+      if (data.errorReason && ERROR_MESSAGES[data.errorReason]) {
+        return ERROR_MESSAGES[data.errorReason];
+      }
+      return data.error || 'Something went wrong (' + status + ').';
+    }
+
+    function showError(msg) {
+      errEl.textContent = msg;
+      errEl.classList.add('visible');
+    }
+
+    function hideError() {
+      errEl.classList.remove('visible');
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      hideError();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Joining…';
+
+      const email = document.getElementById('email').value.trim();
+
+      try {
+        const res = await fetch(apiBase + '/v1/waitlist/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json().catch(function () { return {}; });
+
+        if (!res.ok) {
+          showError(waitlistErrorMessage(data, res.status));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Join waitlist';
+          return;
+        }
+
+        if (data.alreadyJoined) {
+          successMessage.textContent = "You're already on the waitlist — we'll be in touch when registration opens.";
+        } else {
+          successMessage.textContent = "We'll email you when registration opens for your account.";
+        }
+
+        form.style.display = 'none';
+        successEl.classList.add('visible');
+      } catch (err) {
+        showError('Could not reach API at ' + apiBase + '. Try again in a moment.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join waitlist';
+      }
+    });
+  })();
+</script>
+
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
+</body>
+</html>
