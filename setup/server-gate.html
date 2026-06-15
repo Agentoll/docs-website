@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quickstart — Server gate — Agentoll</title>
-  <meta name="description" content="Optional Node/Express middleware for HTTP 402 blocking with the agentoll npm package." />
+  <title>Server gate — Agentoll</title>
+  <meta name="description" content="Layer 2: agentoll Node/Express middleware for HTTP 402 blocking of curl and agents." />
   <link rel="stylesheet" href="/assets/docs.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
     <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/script">Browser embed</a></li>
     <li><a href="/setup/server-gate" class="active">Server gate</a></li>
     <li><a href="/setup/faq">FAQ</a></li>
     <li><a href="/register">Register</a></li>
@@ -26,7 +26,7 @@
     <div class="sidebar-title">Setup</div>
     <ul>
       <li><a href="/setup">Overview</a></li>
-      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/script">Browser embed</a></li>
       <li><a href="/setup/server-gate" class="active">Server gate</a></li>
       <li><a href="/setup/embed">Embed reference</a></li>
       <li><a href="/setup/faq">FAQ</a></li>
@@ -36,8 +36,8 @@
   </aside>
 
   <article class="doc">
-    <h1>Quickstart — Server gate</h1>
-    <p class="lead"><strong>Optional — for sites with a Node server.</strong> Add the <code>agentoll</code> middleware to return HTTP 402 for curl and unpaid agents, in addition to the browser embed script.</p>
+    <h1>Server gate — Layer 2</h1>
+    <p class="lead">Node/Express middleware via the <code>agentoll</code> package. Returns HTTP 402 for curl and unpaid agents — paired with the browser embed for full protection.</p>
 
     <h2>Steps</h2>
     <table>
@@ -47,11 +47,11 @@
       <tbody>
         <tr>
           <td>1</td>
-          <td>Register at <a href="https://agentoll.net/register">agentoll.net/register</a> — choose <strong>Script + server gate</strong> and <strong>save your API key</strong> (<code>atk_...</code>, shown once)</td>
+          <td>Register at <a href="https://agentoll.net/register">agentoll.net/register</a> — <strong>save your API key</strong> (<code>atk_...</code>, shown once)</td>
         </tr>
         <tr>
           <td>2</td>
-          <td>Add the <strong>same embed script</strong> to <code>&lt;head&gt;</code> (browser wallet UX for humans and paying agents)</td>
+          <td>Add the <strong>browser embed</strong> to <code>&lt;head&gt;</code> — <a href="/setup/script">Layer 1 guide</a></td>
         </tr>
         <tr>
           <td>3</td>
@@ -83,9 +83,10 @@ app.get('/article', (req, res) => {
 
 app.listen(3000);</code></pre>
 
-    <p><code>publicOrigin</code> is optional — set it to your registered public URL if it differs from the request host.</p>
+    <p><code>publicOrigin</code> can be set to your registered public URL if it differs from the request host.</p>
 
-    <h2>Embed script (same as script-only)</h2>
+    <h2>Browser embed (Layer 1)</h2>
+    <p>Always pair the server gate with the embed script — humans and paying agents need the in-browser wallet UX.</p>
     <pre><code>&lt;script
   src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"
   data-publisher-id="pub_xxxxxxxx"
@@ -108,19 +109,19 @@ app.listen(3000);</code></pre>
       </tbody>
     </table>
 
-    <p><strong>No DNS changes required.</strong> The server gate talks to the hosted API with your API key — no self-hosted middleware.</p>
+    <p><strong>No DNS changes required.</strong> The server gate uses your API key with the hosted API — no self-hosted middleware.</p>
 
     <div class="callout">
       <strong>Package docs</strong>
-      See <a href="https://www.npmjs.com/package/agentoll">agentoll on npm</a> and
-      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">SERVER_GATE.md</a> for options.
+      <a href="https://www.npmjs.com/package/agentoll">agentoll on npm</a> ·
+      <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/SERVER_GATE.md">SERVER_GATE.md</a>
     </div>
 
     <div class="cta-bar">
-      <h2>Register and save your API key</h2>
-      <p>Select “Script + server gate” at registration for middleware instructions on the success screen.</p>
+      <h2>Register and get both layers</h2>
+      <p>Success screen includes embed snippet and server gate middleware with your API key.</p>
       <a class="btn btn-primary" href="/register">Register your site</a>
-      <a class="btn btn-secondary" href="/setup/script">Script-only path</a>
+      <a class="btn btn-secondary" href="/setup/script">Browser embed</a>
     </div>
 
     <footer class="doc-footer">

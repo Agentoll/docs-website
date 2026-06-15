@@ -1276,7 +1276,8 @@
   </a>
   <ul class="nav-links">
     <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/script">Browser embed</a></li>
+    <li><a href="/setup/server-gate">Server gate</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="/register">Register</a></li>
   </ul>
@@ -1287,7 +1288,7 @@
 <div class="hero-split">
   <div class="hero-copy">
     <h1>Humans pass free. Bots pay the <em>toll</em>.</h1>
-    <p style="color:rgba(255,255,255,0.75);font-size:1.05rem;margin:0 0 20px;max-width:36em;">Hosted script-tag SaaS for bot detection and x402 USDC on Base. Humans pass free; automated clients pay a micro toll. Optional Node middleware for HTTP 402.</p>
+    <p style="color:rgba(255,255,255,0.75);font-size:1.05rem;margin:0 0 20px;max-width:36em;">Two layers of protection: a browser embed script for humans and wallet UX, plus <code>agentoll</code> server gate for HTTP 402 on curl and agents. x402 USDC on Base — no DNS or operator secrets.</p>
     <div class="hero-actions" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
       <a class="btn btn-primary" href="/register" style="display:inline-block;padding:12px 22px;border-radius:10px;background:#fff;color:#000;font-weight:600;text-decoration:none;font-size:15px;">Register your site</a>
       <a class="btn btn-secondary" href="/setup" style="display:inline-block;padding:12px 22px;border-radius:10px;border:1px solid rgba(255,255,255,0.35);color:#fff;text-decoration:none;font-size:15px;">Setup guide</a>
@@ -1309,7 +1310,7 @@
         </symbol>
       </defs>
     </svg>
-    <div class="toll-scene__label">Script at the edge</div>
+    <div class="toll-scene__label">Browser + server gate</div>
     <div class="toll-lane">
       <span class="toll-lane__cap">Human traffic</span>
       <div class="toll-lane__track">
@@ -1345,17 +1346,19 @@
 <!-- GET STARTED -->
 <section id="install">
   <div class="section-label">Get started</div>
-  <h2>Three steps — script only</h2>
-  <p class="section-sub">The default path. No npm, no DNS, no operator secrets. <a href="/setup/server-gate" style="color:var(--accent)">Server gate</a> is optional for Node sites.</p>
+  <h2>Two layers — embed + server gate</h2>
+  <p class="section-sub">Full protection pairs a browser script with Node middleware. Static sites start with the embed; add the gate when you run Express, Next, or similar.</p>
 
   <div class="about-block" style="margin-bottom:40px;max-width:720px;">
     <ol style="margin:0 0 0 1.2em;color:rgba(255,255,255,0.85);line-height:1.9;font-size:15px;">
-      <li><strong>Register</strong> — <a href="/register" style="color:var(--accent)">agentoll.net/register</a>: domain + Base wallet (+ optional email).</li>
-      <li><strong>Embed</strong> — paste the snippet into <code>&lt;head&gt;</code> (hostname must match registration).</li>
-      <li><strong>Done</strong> — humans pass through; bots pay micro USDC via x402 on Base.</li>
+      <li><strong>Register</strong> — <a href="/register" style="color:var(--accent)">agentoll.net/register</a>: domain, Base wallet, save your API key (<code>atk_...</code>).</li>
+      <li><strong>Browser embed</strong> — paste the script into <code>&lt;head&gt;</code> (human detection + payment wall in the browser).</li>
+      <li><strong>Server gate</strong> — <code>npm install agentoll</code> and mount middleware before routes (HTTP 402 for curl and agents).</li>
     </ol>
-    <p style="margin-top:16px;font-size:14px;"><a href="/setup/script" style="color:var(--accent)">Full quickstart →</a></p>
-    <div class="code-block" style="margin-top:20px;">
+    <p style="margin-top:16px;font-size:14px;"><a href="/setup" style="color:var(--accent)">Full setup guide →</a></p>
+
+    <h3 style="margin:28px 0 12px;font-size:1rem;">1. Browser embed</h3>
+    <div class="code-block" style="margin-top:12px;">
       <div class="code-header">
         <span class="code-filename">embed (production)</span>
         <button type="button" class="copy-btn" onclick="copyEmbedSnippet(this)">Copy</button>
@@ -1366,7 +1369,28 @@
   async
 &gt;&lt;/script&gt;</code></pre>
     </div>
-    <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:12px;">API key (<code>atk_...</code>) is shown once at registration — save it for stats or server gate; not needed in HTML for script-only.</p>
+
+    <h3 style="margin:28px 0 12px;font-size:1rem;">2. Server gate (Node / Express)</h3>
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header">
+        <span class="code-filename">middleware</span>
+        <button type="button" class="copy-btn" onclick="copyGateSnippet(this)">Copy</button>
+      </div>
+      <pre id="gate-snippet-pre"><code>npm install agentoll
+
+const express = require('express');
+const { createGate } = require('agentoll');
+
+const app = express();
+
+app.use(
+  createGate({
+    apiKey: process.env.AGENTOLL_API_KEY,
+    publicOrigin: 'https://www.example.com'
+  }).express()
+);</code></pre>
+    </div>
+    <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:12px;">API key is shown once at registration — required for server gate and stats. <a href="/setup/server-gate" style="color:var(--accent)">Server gate guide →</a></p>
   </div>
 
 </section>
@@ -1415,17 +1439,17 @@
 <section id="about">
   <div class="section-label">About</div>
   <h2>What Agentoll is</h2>
-  <p class="about-lead"><strong>Agentoll</strong> charges automated traffic on your website — scripts, crawlers, and AI agents pay a micro-amount in USDC via <strong>x402 on Base</strong>. Human browsers pass through free. Register once and paste one script tag; settlement runs on the hosted API.</p>
+  <p class="about-lead"><strong>Agentoll</strong> charges automated traffic on your website — scripts, crawlers, and AI agents pay micro USDC via <strong>x402 on Base</strong>. Human browsers pass through free. Protection runs in two layers: a hosted browser script and an <code>agentoll</code> server gate for HTTP 402.</p>
 
   <div class="about-block">
-    <h3>Two setup paths</h3>
-    <p><strong>Script only</strong> (default) — register, embed in <code>&lt;head&gt;</code>, done. In-browser bot wall.<br/>
-    <strong>Script + server gate</strong> (optional) — same script plus <code>npm install agentoll</code> on Node/Express for HTTP 402. <a href="/setup/server-gate" style="color:var(--accent)">Server gate guide →</a></p>
+    <h3>Two layers of protection</h3>
+    <p><strong>Browser embed</strong> — script in <code>&lt;head&gt;</code> detects humans, shows the payment wall, and handles wallet UX in the browser.<br/>
+    <strong>Server gate</strong> — <code>npm install agentoll</code> middleware on Node/Express blocks curl and unpaid agents at HTTP 402 before your routes run. <a href="/setup/server-gate" style="color:var(--accent)">Server gate guide →</a></p>
   </div>
 
   <div class="about-block">
-    <h3>How it works (script tag)</h3>
-    <p>Visitor loads your page → hosted script runs → <strong>humans</strong> pass with no payment → <strong>bots</strong> hit classify / payment wall → USDC on Base via x402 → session token for continued access. You only embed the tag.</p>
+    <h3>How it works</h3>
+    <p>In the browser: hosted script runs → <strong>humans</strong> pass with no payment → <strong>bots</strong> hit classify / payment wall → USDC on Base → session token. On the server: unpaid automated requests get <strong>402</strong> + <code>payment-required</code>; paid retries proceed with a session cookie.</p>
   </div>
 
   <div class="about-block">
@@ -1435,7 +1459,7 @@
 
   <div class="about-block">
     <h3>What you add</h3>
-    <p>Register at <a href="/register" style="color:var(--accent)">/register</a> and add the embed snippet to <code>&lt;head&gt;</code>. No DNS changes, npm install, or operator keys for script-only.</p>
+    <p>Register at <a href="/register" style="color:var(--accent)">/register</a>, embed the script in <code>&lt;head&gt;</code>, and mount <code>agentoll</code> on your Node server. No DNS changes or operator keys.</p>
   </div>
 
   <div class="about-block">
@@ -1450,7 +1474,7 @@
 
 <div class="conversion-callout">
   <h3>Ready to monetize your AI traffic?</h3>
-  <p>Register your domain, copy the embed snippet, and go live in minutes.</p>
+  <p>Register, add the browser embed, and mount the server gate on your Node app.</p>
   <div class="hero-actions" style="margin-bottom:0;justify-content:flex-start;">
     <a class="btn btn-primary" href="/register">Register your site</a>
     <a class="btn btn-secondary" href="/setup">Setup guide</a>
@@ -1472,6 +1496,20 @@
 <script>
   const EMBED_SNIPPET = '<script\n  src="https://agentoll-middleware-p5aon.ondigitalocean.app/v1/agent-toll.js"\n  data-publisher-id="pub_xxxxxxxx"\n  async\n></script>';
 
+  const GATE_SNIPPET = `npm install agentoll
+
+const express = require('express');
+const { createGate } = require('agentoll');
+
+const app = express();
+
+app.use(
+  createGate({
+    apiKey: process.env.AGENTOLL_API_KEY,
+    publicOrigin: 'https://www.example.com'
+  }).express()
+);`;
+
   function copyInstall(btn) {
     navigator.clipboard.writeText(EMBED_SNIPPET).then(() => {
       btn.textContent = 'Copied!';
@@ -1481,6 +1519,13 @@
 
   function copyEmbedSnippet(btn) {
     navigator.clipboard.writeText(EMBED_SNIPPET).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+
+  function copyGateSnippet(btn) {
+    navigator.clipboard.writeText(GATE_SNIPPET).then(() => {
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
     });

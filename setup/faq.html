@@ -13,7 +13,7 @@
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
     <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/script">Browser embed</a></li>
     <li><a href="/setup/server-gate">Server gate</a></li>
     <li><a href="/setup/faq" class="active">FAQ</a></li>
     <li><a href="/register">Register</a></li>
@@ -26,7 +26,7 @@
     <div class="sidebar-title">Setup</div>
     <ul>
       <li><a href="/setup">Overview</a></li>
-      <li><a href="/setup/script">Script only</a></li>
+      <li><a href="/setup/script">Browser embed</a></li>
       <li><a href="/setup/server-gate">Server gate</a></li>
       <li><a href="/setup/embed">Embed reference</a></li>
       <li><a href="/setup/faq" class="active">FAQ</a></li>
@@ -49,19 +49,19 @@
     <p>You register <strong>your</strong> wallet for revenue attribution. Visitors’ agents pay from their own wallets when they hit the toll.</p>
 
     <h2>Do I need npm?</h2>
-    <p>Only if you want HTTP 402 on server routes — install the <code>agentoll</code> package. Script-only needs no npm.</p>
+    <p>For full protection on a Node server, yes — <code>npm install agentoll</code> for the server gate. Static HTML-only sites start with the browser embed and add the gate when they have a backend.</p>
 
     <h2>Do I need DNS changes?</h2>
-    <p>No. Paste the script tag on your existing site — no DNS records to add or change.</p>
+    <p>No. Paste the embed on your existing site and mount middleware on your server — no DNS records to add or change.</p>
 
     <h2>What is the API key for?</h2>
-    <p>Server gate middleware (<code>X-Publisher-Key</code> / <code>apiKey</code> option) and optional stats API (<code>/v1/publishers/me/stats</code>). Not required in HTML for script-only.</p>
+    <p><strong>Server gate</strong> middleware (<code>createGate({ apiKey })</code>) and <strong>stats API</strong> (<code>/v1/publishers/me/stats</code>). Not placed in HTML — use an environment variable on your server.</p>
 
-    <h2>Script only vs server gate?</h2>
-    <p><strong>Script only</strong> = in-browser detection and payment wall. <strong>Server gate</strong> = same script plus Node middleware that also blocks curl and agents at HTTP 402.</p>
+    <h2>Browser embed vs server gate?</h2>
+    <p>Both are core parts of the product. <strong>Browser embed</strong> = in-browser detection and payment wall. <strong>Server gate</strong> = HTTP 402 for curl and agents at your routes. Use both on Node/Express sites.</p>
 
     <h2>What happened to the agent-toll npm package?</h2>
-    <p>v3 removed self-hosted middleware for publishers. Use the hosted script tag plus optional <code>agentoll</code> for server gate.</p>
+    <p>v3 removed self-hosted middleware for publishers. Use the hosted browser embed plus <code>agentoll</code> for the server gate.</p>
 
     <h2>Where does USDC go?</h2>
     <p>On-chain to the platform operator wallet. Your registered wallet is used for revenue share and attribution.</p>
@@ -71,9 +71,9 @@
 
     <div class="cta-bar">
       <h2>Still have questions?</h2>
-      <p>Start with the script quickstart — most publishers are live in three steps.</p>
+      <p>Register for both layers — browser embed and server gate.</p>
       <a class="btn btn-primary" href="/register">Register your site</a>
-      <a class="btn btn-secondary" href="/setup/troubleshooting">Troubleshooting</a>
+      <a class="btn btn-secondary" href="/setup">Setup overview</a>
     </div>
   </article>
 </div>

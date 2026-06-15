@@ -1,10 +1,9 @@
 # Getting started with Agentoll
 
-**Default path:** register → embed → done (script only). Full guide: **[setup/script.html](setup/script.html)** on the site or [agentoll.net/setup/script](https://agentoll.net/setup/script).
+**Two layers:** browser embed + server gate. Full guide: [agentoll.net/setup](https://agentoll.net/setup).
 
 - **Site:** [agentoll.net](https://agentoll.net)
 - **Register:** [agentoll.net/register](https://agentoll.net/register)
-- **Setup hub:** [agentoll.net/setup](https://agentoll.net/setup)
 
 ---
 
@@ -16,9 +15,9 @@ Go to [agentoll.net/register](https://agentoll.net/register) and submit:
 - **Wallet** — Base `0x…` address for revenue attribution
 - **Email** — optional
 
-You receive `publisherId`, `apiKey` (shown once), and an embed snippet.
+You receive `publisherId`, `apiKey` (shown once), embed snippet, and server gate instructions.
 
-## 2. Embed
+## 2. Browser embed (Layer 1)
 
 ```html
 <script
@@ -28,24 +27,20 @@ You receive `publisherId`, `apiKey` (shown once), and an embed snippet.
 ></script>
 ```
 
-`data-api-base` is optional when the script is loaded from the same API origin.
+Paste in `<head>`. Human detection and in-browser payment wall.
 
-## 3. Done
-
-- **Human browsers** — pass through free; no payment.
-- **Bots / agents** — classify → payment wall → USDC on Base → session token.
-
-Save your API key for optional [stats API](setup/stats.html) or [server gate](setup/server-gate.html). It is not needed in HTML for script-only.
-
----
-
-## Optional: server gate
-
-For Node / Express sites that need HTTP 402 for curl: [setup/server-gate.html](setup/server-gate.html).
+## 3. Server gate (Layer 2)
 
 ```bash
 npm install agentoll
 ```
+
+```js
+const { createGate } = require('agentoll');
+app.use(createGate({ apiKey: process.env.AGENTOLL_API_KEY }).express());
+```
+
+HTTP 402 for curl and unpaid agents. See [setup/server-gate.html](setup/server-gate.html).
 
 ---
 

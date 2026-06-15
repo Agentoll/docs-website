@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quickstart — Script only — Agentoll</title>
-  <meta name="description" content="Register, paste one script tag, and go live. Default Agentoll setup for any website." />
+  <title>Browser embed — Agentoll</title>
+  <meta name="description" content="Layer 1: hosted script tag for human detection and in-browser bot payment wall." />
   <link rel="stylesheet" href="/assets/docs.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
     <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script" class="active">Quickstart</a></li>
+    <li><a href="/setup/script" class="active">Browser embed</a></li>
     <li><a href="/setup/server-gate">Server gate</a></li>
     <li><a href="/setup/faq">FAQ</a></li>
     <li><a href="/register">Register</a></li>
@@ -26,7 +26,7 @@
     <div class="sidebar-title">Setup</div>
     <ul>
       <li><a href="/setup">Overview</a></li>
-      <li><a href="/setup/script" class="active">Script only</a></li>
+      <li><a href="/setup/script" class="active">Browser embed</a></li>
       <li><a href="/setup/server-gate">Server gate</a></li>
       <li><a href="/setup/embed">Embed reference</a></li>
       <li><a href="/setup/faq">FAQ</a></li>
@@ -36,10 +36,10 @@
   </aside>
 
   <article class="doc">
-    <h1>Quickstart — Script only</h1>
-    <p class="lead">The default path. Works on any site with a <code>&lt;head&gt;</code>. No npm, no DNS changes, no server required.</p>
+    <h1>Browser embed — Layer 1</h1>
+    <p class="lead">The hosted script tag in <code>&lt;head&gt;</code>. Detects humans, classifies bots, and runs the payment wall with wallet UX in the browser.</p>
 
-    <h2>Three steps</h2>
+    <h2>Steps</h2>
     <table>
       <thead>
         <tr><th>Step</th><th>Action</th></tr>
@@ -51,11 +51,15 @@
         </tr>
         <tr>
           <td>2</td>
-          <td>Enter <strong>domain</strong>, <strong>Base wallet address</strong>, and optional email</td>
+          <td>Enter <strong>domain</strong>, <strong>Base wallet address</strong>, and optional email — <strong>save your API key</strong></td>
         </tr>
         <tr>
           <td>3</td>
           <td>Copy the embed snippet into <code>&lt;head&gt;</code> on your site</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>If you run Node/Express, add <a href="/setup/server-gate">Layer 2 — server gate</a></td>
         </tr>
       </tbody>
     </table>
@@ -71,32 +75,32 @@
     <h2>Important notes</h2>
     <ul>
       <li><code>data-publisher-id</code> is <strong>required</strong> — you get it at registration.</li>
-      <li><code>data-api-base</code> is <strong>optional</strong> — defaults to the script URL origin. Use it for local dev (e.g. <code>http://localhost:8787</code>).</li>
-      <li>Your page <strong>Origin</strong> must match the registered domain (register <code>example.com</code>, serve from <code>https://example.com</code> or <code>https://www.example.com</code>).</li>
-      <li>The API key (<code>atk_...</code>) is issued at registration but <strong>not needed in HTML</strong> for script-only. Save it for the stats API later.</li>
+      <li><code>data-api-base</code> is optional — defaults to the script URL origin. Use for local dev (e.g. <code>http://localhost:8787</code>).</li>
+      <li>Your page <strong>Origin</strong> must match the registered domain.</li>
+      <li>The API key (<code>atk_...</code>) is not placed in HTML — save it for the <a href="/setup/server-gate">server gate</a> and <a href="/setup/stats">stats API</a>.</li>
     </ul>
 
-    <h2>Verify it works</h2>
+    <h2>Verify the embed</h2>
     <ul>
-      <li>Open your site in Chrome — you should <strong>not</strong> see a payment wall.</li>
-      <li>Use a bot-like User-Agent or an automated fetch from another origin — you should see the classify / payment flow.</li>
-      <li>Check API health: <code>https://agentoll-middleware-p5aon.ondigitalocean.app/health</code></li>
+      <li>Open your site in Chrome — no payment wall for humans.</li>
+      <li>Bot-like User-Agent or automated fetch — classify / payment flow triggers.</li>
+      <li>API health: <code>https://agentoll-middleware-p5aon.ondigitalocean.app/health</code></li>
     </ul>
 
     <div class="callout">
-      <strong>Need HTTP 402 for curl?</strong>
-      Script-only protects in the browser. To block unpaid curl and agents at the HTTP layer, add the optional <a href="/setup/server-gate">server gate</a>.
+      <strong>Layer 2 — server gate</strong>
+      The embed does not block curl at the HTTP layer. Mount <code>agentoll</code> on your Node server for HTTP 402. <a href="/setup/server-gate">Server gate guide →</a>
     </div>
 
     <div class="cta-bar">
       <h2>Get your embed snippet</h2>
-      <p>Registration takes about a minute.</p>
+      <p>Registration includes both embed and server gate instructions.</p>
       <a class="btn btn-primary" href="/register">Register your site</a>
-      <a class="btn btn-secondary" href="/setup/embed">Embed reference</a>
+      <a class="btn btn-secondary" href="/setup/server-gate">Server gate</a>
     </div>
 
     <footer class="doc-footer">
-      <p><a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">Full API contract</a></p>
+      <p><a href="/setup/embed">Embed reference</a> · <a href="https://github.com/agent-toll/agent-toll/blob/main/docs/E2E_SEPOLIA_SPEC.md">API contract</a></p>
     </footer>
   </article>
 </div>

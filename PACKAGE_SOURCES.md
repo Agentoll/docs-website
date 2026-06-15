@@ -1,8 +1,8 @@
 # Package Sources
 
-This docs site references production URLs and the v3 publisher integration path.
+Production URLs and v3 publisher integration (browser embed + server gate).
 
-## Production (script-tag SaaS)
+## Production
 
 | Role | URL |
 |------|-----|
@@ -15,13 +15,9 @@ This docs site references production URLs and the v3 publisher integration path.
 
 | Package | Use |
 |---------|-----|
-| `agentoll` | Optional server gate (Node/Express HTTP 402) — https://www.npmjs.com/package/agentoll |
+| `agentoll` | Server gate — Layer 2 (Node/Express HTTP 402) — https://www.npmjs.com/package/agentoll |
 
-Publisher onboarding uses the hosted script tag. Optional server gate: the `agentoll` npm package.
-
-## Obsolete (audit before deploy)
-
-Remove legacy API hosts, legacy CDN hosts, self-hosted middleware install paths, DNS proxy setup, and old middleware helpers from publisher docs.
+Publisher setup: hosted browser embed + `agentoll` server gate.
 
 ## GitHub repositories
 

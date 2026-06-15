@@ -7,8 +7,8 @@ Marketing site and publisher documentation for **Agentoll** — [https://agentol
 | Doc | Purpose |
 |-----|---------|
 | [setup/index.html](setup/index.html) | Setup overview — `/setup` |
-| [setup/script.html](setup/script.html) | Default quickstart: register → embed → done |
-| [setup/server-gate.html](setup/server-gate.html) | Optional `agentoll` middleware |
+| [setup/script.html](setup/script.html) | Layer 1: browser embed |
+| [setup/server-gate.html](setup/server-gate.html) | Layer 2: `agentoll` server gate |
 | [setup/embed.html](setup/embed.html) | Embed attributes + framework examples |
 | [setup/faq.html](setup/faq.html) | FAQ |
 | [setup/troubleshooting.html](setup/troubleshooting.html) | Troubleshooting |

@@ -1,30 +1,24 @@
 # Agentoll — publisher deployment
 
-v3 is **hosted script-tag SaaS**. Optional **server gate** via the `agentoll` npm package. No self-hosted middleware or DNS setup for publishers.
+v3 is **browser embed + server gate** on the hosted API. No self-hosted middleware or DNS setup.
 
-## Script only (default)
+## Full setup (Node / Express)
 
-1. **[Register](https://agentoll.net/register)** — domain + Base wallet (+ optional email).
-2. **Embed** — paste the snippet into `<head>` on your registered hostname.
-3. **Verify** — human traffic passes through; bot traffic triggers payment on Base.
+1. **[Register](https://agentoll.net/register)** — domain + Base wallet; save API key.
+2. **Browser embed** — paste script into `<head>`.
+3. **Server gate** — `npm install agentoll` and mount middleware before routes.
 
-Full guide: [setup/script.html](setup/script.html)
+Guides: [setup/script.html](setup/script.html) · [setup/server-gate.html](setup/server-gate.html)
 
-## Script + server gate (optional)
+## Static / hosted HTML
 
-Same registration and embed, plus:
-
-```bash
-npm install agentoll
-```
-
-See [setup/server-gate.html](setup/server-gate.html).
+Use the browser embed. Add the server gate when you run a Node backend.
 
 ## Requirements
 
-- HTTPS on your site (recommended for production)
-- Registered domain must match the hostname serving the script
-- Save your `apiKey` at registration (shown once)
+- HTTPS recommended
+- Registered domain must match page origin
+- API key shown once at registration — required for server gate
 
 ## Stats API
 
@@ -33,8 +27,6 @@ curl -H "X-Publisher-Key: atk_..." \
   "https://agentoll-middleware-p5aon.ondigitalocean.app/v1/publishers/me/stats"
 ```
 
-See [setup/stats.html](setup/stats.html).
+## Operator deployment
 
-## Operator / platform deployment
-
-If you run the Agent Toll API (not a typical publisher task), see the **agent-toll** repo: [server/README.md](https://github.com/agent-toll/agent-toll/blob/main/server/README.md).
+See [server/README.md](https://github.com/agent-toll/agent-toll/blob/main/server/README.md) in the agent-toll repo.

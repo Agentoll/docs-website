@@ -306,13 +306,10 @@
     }
 
     .gate-panel {
-      display: none;
       margin-top: 8px;
       padding-top: 20px;
       border-top: 1px solid var(--border);
     }
-
-    .gate-panel.visible { display: block; }
 
     .gate-panel h3 {
       font-size: 0.9375rem;
@@ -374,7 +371,7 @@
   <a class="nav-logo" href="/">Agentoll</a>
   <ul class="nav-links">
     <li><a href="/setup">Setup</a></li>
-    <li><a href="/setup/script">Quickstart</a></li>
+    <li><a href="/setup/script">Browser embed</a></li>
     <li><a href="/#about">About</a></li>
     <li><a href="/register" class="active">Register</a></li>
   </ul>
@@ -383,7 +380,7 @@
 
 <div class="wrap">
   <h1>Protect your site from bots</h1>
-  <p class="lead">Add one script tag. Humans pass through free. Bots pay a micro USDC toll on Base.</p>
+  <p class="lead">Two layers: browser embed script + server gate. Humans pass free; bots and curl pay a micro USDC toll on Base.</p>
 
   <form id="register-form" novalidate>
     <label for="domain">Website domain</label>
@@ -396,27 +393,7 @@
 
     <label for="email">Email (optional)</label>
     <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
-    <p class="hint">Support and account recovery only — not required for the script to work.</p>
-
-    <fieldset class="tier-fieldset">
-      <legend>Integration (optional)</legend>
-      <div class="tier-options">
-        <label class="tier-option">
-          <input type="radio" name="tier" value="script" checked />
-          <span class="tier-option-body">
-            <strong>Script only</strong>
-            <span>Paste the embed snippet in your site’s <code>&lt;head&gt;</code>.</span>
-          </span>
-        </label>
-        <label class="tier-option">
-          <input type="radio" name="tier" value="gate" />
-          <span class="tier-option-body">
-            <strong>Script + server gate</strong>
-            <span>Same registration — we’ll show Node/Express middleware steps after signup.</span>
-          </span>
-        </label>
-      </div>
-    </fieldset>
+    <p class="hint">Support and account recovery only — not required for setup.</p>
 
     <button type="submit" id="submit-btn">Create account</button>
     <div id="form-error" class="error" role="alert"></div>
@@ -424,7 +401,7 @@
 
   <div id="success-panel" class="success-panel" aria-live="polite">
     <h2>You're registered</h2>
-    <p class="intro">Copy your credentials below. Paste the embed snippet into <code style="font-family:var(--mono)">&lt;head&gt;</code> on your domain.</p>
+    <p class="intro">Copy your credentials below. You’ll get both layers: browser embed + server gate.</p>
 
     <div class="field-block">
       <label for="out-publisher-id">Publisher ID</label>
@@ -444,14 +421,14 @@
     </div>
 
     <div class="field-block">
-      <label for="out-snippet">Embed snippet</label>
+      <label for="out-snippet">1. Browser embed — paste in <code>&lt;head&gt;</code></label>
       <textarea id="out-snippet" readonly spellcheck="false"></textarea>
       <button type="button" class="copy-btn" style="margin-top:8px;width:100%" data-copy="out-snippet">Copy snippet</button>
     </div>
 
-    <div id="gate-panel" class="gate-panel">
-      <h3>Server gate (Node / Express)</h3>
-      <p>Install the <code style="font-family:var(--mono)">agentoll</code> package and mount the gate with your API key:</p>
+    <div id="gate-panel" class="gate-panel visible">
+      <h3>2. Server gate — Node / Express</h3>
+      <p>Mount <code style="font-family:var(--mono)">agentoll</code> on your server with your API key. Pair with the embed above for full protection.</p>
       <pre id="gate-install">npm install agentoll</pre>
       <button type="button" class="copy-btn" style="margin-bottom:14px;width:100%" data-copy-text="npm install agentoll">Copy install command</button>
       <pre id="gate-code"></pre>
@@ -463,7 +440,7 @@
   </div>
 
   <footer class="page-footer">
-    Payments and x402 settlement run on the hosted API — no DNS, npm, or operator setup for script-only.
+    Payments and x402 settlement run on the hosted API — browser embed + server gate, no operator setup.
     <br /><a href="/">← Back to docs</a>
   </footer>
 </div>
@@ -481,7 +458,6 @@
     const form = document.getElementById('register-form');
     const errEl = document.getElementById('form-error');
     const successEl = document.getElementById('success-panel');
-    const gatePanel = document.getElementById('gate-panel');
     const submitBtn = document.getElementById('submit-btn');
     const gateCodeEl = document.getElementById('gate-code');
     let gateMiddlewareSource = '';
@@ -512,11 +488,6 @@
         v = v.split('/')[0];
       }
       return v.replace(/^www\./, '');
-    }
-
-    function selectedTier() {
-      const checked = form.querySelector('input[name="tier"]:checked');
-      return checked ? checked.value : 'script';
     }
 
     function buildEmbedSnippet(publisherId) {
@@ -581,7 +552,6 @@
       const domain = normalizeDomain(document.getElementById('domain').value);
       const walletAddress = document.getElementById('walletAddress').value.trim();
       const emailRaw = document.getElementById('email').value.trim();
-      const tier = selectedTier();
 
       const body = { walletAddress, domain };
       if (emailRaw) body.email = emailRaw;
@@ -607,12 +577,6 @@
 
         gateMiddlewareSource = buildGateMiddleware(data.apiKey);
         gateCodeEl.textContent = gateMiddlewareSource;
-
-        if (tier === 'gate') {
-          gatePanel.classList.add('visible');
-        } else {
-          gatePanel.classList.remove('visible');
-        }
 
         form.style.display = 'none';
         successEl.classList.add('visible');
