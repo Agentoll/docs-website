@@ -53,6 +53,9 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
     }
 
     .logo-mark {
@@ -78,7 +81,7 @@
     .nav-links a {
       color: #ffffff;
       text-decoration: none;
-      font-size: 14px;
+      font-size: 15px;
       transition: color 0.2s;
     }
 
@@ -87,9 +90,9 @@
     .nav-badge {
       background: #ffffff;
       color: #000000;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 20px;
       text-decoration: none;
       border: none;
@@ -334,7 +337,7 @@
     }
 
     .hero-copy h1 {
-      font-size: clamp(36px, 6vw, 60px);
+      font-size: clamp(40px, 6.5vw, 66px);
       font-weight: 800;
       line-height: 1.1;
       letter-spacing: -1.5px;
@@ -1177,32 +1180,16 @@
 <section id="about">
   <div class="section-label">About</div>
   <h2>What Agentoll is</h2>
-  <p class="about-lead"><strong>Agentoll</strong> charges automated traffic on your website — scripts, crawlers, and AI agents pay micro USDC via <strong>x402 on Base</strong>. Human browsers pass through free. Protection runs in two layers: a hosted browser script and an <code>agentoll</code> server gate for HTTP 402.</p>
+  <p class="about-lead">Monetize automated traffic on your site. Humans browse free; bots and AI agents pay a toll you set—in USDC on Base.</p>
 
   <div class="about-block">
-    <h3>Two layers of protection</h3>
-    <p><strong>Browser embed</strong> — script in <code>&lt;head&gt;</code> detects humans, shows the payment wall, and handles wallet UX in the browser.<br/>
-    <strong>Server gate</strong> — <code>npm install agentoll</code> middleware on Node/Express blocks curl and unpaid agents at HTTP 402 before your routes run. <a href="/setup/integration#server-gate" style="color:var(--accent)">Integration guide →</a></p>
+    <h3>The problem</h3>
+    <p>Crawlers and agents consume your content and API capacity at scale, without paying. Agentoll turns that traffic into revenue instead of cost.</p>
   </div>
 
   <div class="about-block">
-    <h3>How it works</h3>
-    <p>In the browser: hosted script runs → <strong>humans</strong> pass with no payment → <strong>bots</strong> hit classify / payment wall → USDC on Base → session token. On the server: unpaid automated requests get <strong>402</strong> + <code>payment-required</code>; paid retries proceed with a session cookie.</p>
-  </div>
-
-  <div class="about-block">
-    <h3>Why it exists</h3>
-    <p>Automated clients can scrape and call your site at scale without accounts or compensation. Agentoll is a toll booth for machines: register once, paste one script, and bot traffic pays micro USDC on Base while humans stay free.</p>
-  </div>
-
-  <div class="about-block">
-    <h3>What you add</h3>
-    <p>Join the <a href="/waitlist" style="color:var(--accent)">waitlist</a>, then embed the script in <code>&lt;head&gt;</code> and mount <code>agentoll</code> on your Node server once invited. No DNS changes or operator keys.</p>
-  </div>
-
-  <div class="about-block">
-    <h3>Defaults (at a glance)</h3>
-    <p>Publishers set the toll amount in USDC. Agentoll takes a percentage of each payment; you receive the rest. Human browsers always pass through free. Bot sessions are short-lived JWTs issued after payment.</p>
+    <h3>What you get</h3>
+    <p>Detection, payment, and settlement handled for you. You set the toll; Agentoll takes a percentage and passes the rest to your wallet. <a href="/setup" style="color:var(--accent)">Docs →</a></p>
   </div>
 </section>
 
