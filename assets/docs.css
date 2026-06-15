@@ -281,7 +281,8 @@ nav {
   text-decoration: none;
 }
 
-.btn-primary {
+.btn-primary,
+.doc a.btn-primary {
   background: #fff;
   color: #000;
 }
